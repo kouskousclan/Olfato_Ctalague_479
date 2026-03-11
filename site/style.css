@@ -1292,6 +1292,26 @@ button {
   .fragrance-profile {
     grid-template-columns: 1fr;
   }
+
+  /* --- Mobile Product Page Layout Fix --- */
+  .product-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .product-left, 
+  .product-right {
+    display: contents; /* Flattens columns so children can be reordered */
+  }
+
+  .product-title-section { order: 1; margin-bottom: -1rem; }
+  .product-image-container { order: 2; }
+  .section-accords { order: 3; }
+  .section-pyramid { order: 4; }
+  .section-daytime { order: 5; }
+  .section-seasons { order: 6; }
+  .product-description { order: 7; }
 }
 
 @media (max-width: 480px) {

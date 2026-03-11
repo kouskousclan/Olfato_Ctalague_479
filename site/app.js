@@ -328,7 +328,7 @@ function buildProductPage(product) {
         const dayW = (dayPct / total * 100).toFixed(0);
         const nightW = (nightPct / total * 100).toFixed(0);
         daytimeHtml = `
-      <div class="info-card">
+      <div class="info-card section-daytime">
         <div class="info-card-title">${t('daytime_title')}</div>
         <div class="daytime-bar">
           <div class="daytime-day" style="width:${dayW}%">☀️ ${t('day')}</div>
@@ -363,7 +363,7 @@ function buildProductPage(product) {
             }).join('');
 
         seasonsHtml = `
-      <div class="info-card">
+      <div class="info-card section-seasons">
         <div class="info-card-title">${t('seasons_title')}</div>
         <div class="seasons-grid">${seasonItems}</div>
       </div>
@@ -410,7 +410,7 @@ function buildProductPage(product) {
             }).join('');
 
         pyramidHtml = `
-      <div class="info-card">
+      <div class="info-card section-pyramid">
         <div class="info-card-title">${t('pyramid_title')}</div>
         <div class="pyramid-section">${levelsHtml}</div>
       </div>
@@ -455,7 +455,7 @@ function buildProductPage(product) {
       </div>
       <div class="product-right">
         ${product.accords.length > 0 ? `
-          <div class="info-card">
+          <div class="info-card section-accords">
             <div class="info-card-title">${t('main_accords')}</div>
             ${accordsHtml}
           </div>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Olfato House — Catalogue de Parfums</title>
+  <meta name="description"
+    content="Olfato House - The Art of Perfume. Découvrez notre collection exclusive de parfums pour homme, femme et unisex.">
+  <link rel="icon" href="site/assets/logo.png" type="image/png">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="site/style.css">
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header id="header">
+    <div class="header-inner">
+      <a href="index.html" class="logo-link">
+        <img src="site/assets/logo.png" alt="Olfato House" class="logo" id="main-logo">
+      </a>
+      <nav id="main-nav">
+        <a href="#" class="nav-link active" data-filter="all">Tous</a>
+        <a href="#" class="nav-link" data-filter="Homme">Homme</a>
+        <a href="#" class="nav-link" data-filter="Femme">Femme</a>
+        <a href="#" class="nav-link" data-filter="Unisex">Unisex</a>
+      </nav>
+      <div class="search-container" id="search-container">
+        <input type="text" id="search-input" placeholder="Rechercher un parfum..." autocomplete="off">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <div id="search-dropdown" class="search-dropdown hidden"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <img src="site/assets/logo.png" alt="Olfato House" class="hero-logo">
+      <p class="hero-subtitle">L'Art du Parfum</p>
+      <div class="hero-search">
+        <input type="text" id="hero-search-input" placeholder="Rechercher par nom, marque ou accord..."
+          autocomplete="off">
+        <button id="hero-search-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
+        <div id="hero-search-dropdown" class="search-dropdown hidden"></div>
+      </div>
+      <div class="hero-categories">
+        <button class="cat-btn" data-filter="Homme">
+          <span class="cat-icon">♂</span>
+          <span>Homme</span>
+        </button>
+        <button class="cat-btn" data-filter="Femme">
+          <span class="cat-icon">♀</span>
+          <span>Femme</span>
+        </button>
+        <button class="cat-btn" data-filter="Unisex">
+          <span class="cat-icon">⚤</span>
+          <span>Unisex</span>
+        </button>
+      </div>
+    </div>
+    <div class="hero-scroll-indicator">
+      <span>Découvrir</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </div>
+  </section>
+
+  <!-- CATALOG -->
+  <section id="catalog">
+    <div class="catalog-header">
+      <h1 id="catalog-title">Notre Collection</h1>
+      <span id="product-count" class="product-count"></span>
+    </div>
+    <div id="product-grid" class="product-grid"></div>
+    <div id="load-more-container" class="load-more-container">
+      <button id="load-more-btn" class="load-more-btn">Voir plus</button>
+    </div>
+  </section>
+
+  <!-- PRODUCT MODAL -->
+  <div id="product-modal" class="modal hidden">
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <div class="modal-content" id="modal-content">
+      <button class="modal-close" id="modal-close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="footer-inner">
+      <img src="site/assets/logo.png" alt="Olfato House" class="footer-logo">
+      <p class="footer-text">© 2026 Olfato House — The Art of Perfume</p>
+    </div>
+  </footer>
+
+  <script src="site/app.js"></script>
+</body>
+
+</html>

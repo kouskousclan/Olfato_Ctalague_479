@@ -1,0 +1,11 @@
+.venv/
+V1_BACKUP/
+V2_BACKUP/
+Photos_VF/
+Notes_image_files/
+json_all/
+desktop.ini
+*.pyc
+__pycache__/
+*.csv
+database/

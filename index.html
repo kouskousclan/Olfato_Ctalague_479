@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Olfato House — Catalogue de Parfums</title>
+  <meta name="description"
+    content="Olfato House - The Art of Perfume. Découvrez notre collection exclusive de parfums pour homme, femme et unisex.">
+  <link rel="icon" href="https://mkomrppcdrgbpfybrfyu.supabase.co/storage/v1/object/public/assets/logo-.png" type="image/png">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Cairo:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="site/style.css">
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header id="header">
+    <div class="header-inner">
+      <a href="index.html" class="logo-link">
+        <img src="https://mkomrppcdrgbpfybrfyu.supabase.co/storage/v1/object/public/assets/logo-.png" alt="Olfato House" class="logo" id="main-logo">
+      </a>
+      <nav id="main-nav">
+        <a href="#" class="nav-link active" data-filter="all" data-i18n="nav_all">Tous</a>
+        <a href="#" class="nav-link" data-filter="Homme" data-i18n="nav_homme">Homme</a>
+        <a href="#" class="nav-link" data-filter="Femme" data-i18n="nav_femme">Femme</a>
+        <a href="#" class="nav-link" data-filter="Unisex" data-i18n="nav_unisex">Unisex</a>
+      </nav>
+      <div class="search-container" id="search-container">
+        <input type="text" id="search-input" data-i18n-placeholder="search_header_placeholder"
+          placeholder="Rechercher un parfum..." autocomplete="off">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <div id="search-dropdown" class="search-dropdown hidden"></div>
+      </div>
+      <!-- Language Switcher -->
+      <div class="lang-switcher" id="lang-switcher">
+        <button class="lang-btn active" data-lang="fr" title="Français">FR</button>
+        <button class="lang-btn" data-lang="en" title="English">EN</button>
+        <button class="lang-btn" data-lang="ar" title="العربية">ع</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg">
+      <video class="hero-video" src="https://mkomrppcdrgbpfybrfyu.supabase.co/storage/v1/object/public/assets/Hero_vid.mp4" autoplay loop muted playsinline></video>
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-content">
+      <img src="https://mkomrppcdrgbpfybrfyu.supabase.co/storage/v1/object/public/assets/logo-.png" alt="Olfato House" class="hero-logo">
+      <p class="hero-subtitle" data-i18n="hero_subtitle">L'Art du Parfum</p>
+      <div class="hero-categories">
+        <button class="cat-btn" data-filter="Homme">
+          <span class="cat-icon">♂</span>
+          <span data-i18n="nav_homme">Homme</span>
+        </button>
+        <button class="cat-btn" data-filter="Femme">
+          <span class="cat-icon">♀</span>
+          <span data-i18n="nav_femme">Femme</span>
+        </button>
+        <button class="cat-btn" data-filter="Unisex">
+          <span class="cat-icon">⚤</span>
+          <span data-i18n="nav_unisex">Unisex</span>
+        </button>
+      </div>
+      <div class="hero-search">
+        <input type="text" id="hero-search-input" data-i18n-placeholder="search_placeholder"
+          placeholder="Rechercher par nom, marque ou accord..." autocomplete="off">
+        <button id="hero-search-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
+        <div id="hero-search-dropdown" class="search-dropdown hidden"></div>
+      </div>
+    </div>
+    <div class="hero-scroll-indicator">
+      <span data-i18n="discover">Découvrir</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </div>
+  </section>
+
+  <!-- CATALOG -->
+  <section id="catalog">
+    <div class="catalog-header">
+      <h1 id="catalog-title" data-i18n="collection_title">Notre Collection</h1>
+      <span id="product-count" class="product-count"></span>
+    </div>
+    <div id="product-grid" class="product-grid"></div>
+    <div id="load-more-container" class="load-more-container">
+      <button id="load-more-btn" class="load-more-btn" data-i18n="load_more">Voir plus</button>
+    </div>
+  </section>
+
+  <!-- PRODUCT MODAL -->
+  <div id="product-modal" class="modal hidden">
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <div class="modal-content" id="modal-content">
+      <button class="modal-close" id="modal-close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- FLOATING SCROLL BUTTONS -->
+  <div class="scroll-buttons">
+    <button id="scroll-to-top" class="scroll-btn hidden" title="Haut de page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="18 15 12 9 6 15"></polyline>
+      </svg>
+    </button>
+    <button id="scroll-to-bottom" class="scroll-btn" title="Bas de page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </button>
+  </div>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="footer-inner">
+      <img src="https://mkomrppcdrgbpfybrfyu.supabase.co/storage/v1/object/public/assets/logo-.png" alt="Olfato House" class="footer-logo">
+      <p class="footer-text" data-i18n="footer_text">© 2026 Olfato House — The Art of Perfume</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="site/i18n.js"></script>
+  <script src="site/app.js?v=7"></script>
+</body>
+
+</html>

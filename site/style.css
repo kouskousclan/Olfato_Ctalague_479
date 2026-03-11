@@ -364,7 +364,7 @@ button {
 }
 
 .hero-logo {
-  height: 180px;
+  height: 280px;
   width: auto;
   margin: 0 auto 1.5rem;
   filter: invert(61%) sepia(59%) saturate(497%) hue-rotate(1deg) brightness(97%) contrast(92%) drop-shadow(0 8px 16px rgba(197, 160, 89, 0.3));
@@ -1230,7 +1230,7 @@ button {
   }
 
   .hero-logo {
-    height: 100px;
+    height: 140px;
   }
 
   .hero-subtitle {

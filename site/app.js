@@ -16,6 +16,17 @@ let currentPage = 0;
 let searchTimeout = null;
 
 // ============================================
+// UTILS
+// ============================================
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+// ============================================
 // DATA LOADING
 // ============================================
 async function loadProducts() {
@@ -88,6 +99,9 @@ async function loadProducts() {
             return pObj;
         });
         
+        // Randomize initial order
+        shuffleArray(allProducts);
+        
         filteredProducts = [...allProducts];
         console.log("✅ Successfully mapped products. AllProducts length:", allProducts.length);
         updateCatalog();
@@ -111,8 +125,10 @@ function applyFilter(genre) {
 
     if (genre === 'all') {
         filteredProducts = [...allProducts];
+        shuffleArray(filteredProducts); // Re-shuffle all for a fresh view
     } else {
         filteredProducts = allProducts.filter(p => p.genre === genre);
+        shuffleArray(filteredProducts); // Shuffle the category specifically
     }
 
     // Reset catalog title to translated default

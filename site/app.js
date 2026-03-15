@@ -36,9 +36,20 @@ async function loadProducts() {
             .from('products')
             .select(`
                 *,
-                product_accords(*),
-                product_wear_times(*),
-                product_notes(*)
+                product_accords(
+                    percentage,
+                    sort_order,
+                    accords (label_en, label_fr, label_ar, hex_color)
+                ),
+                product_wear_times(
+                    percentage,
+                    periods (period_en, period_fr)
+                ),
+                product_notes(
+                    level,
+                    sort_order,
+                    notes (note_name_en, note_name_fr, note_name_ar)
+                )
             `)
             .order('id')
             .limit(1000); // Fetch all products
@@ -66,15 +77,20 @@ async function loadProducts() {
                 inspiration: p.inspiration,
                 nom: p.nom,
                 image: imageUrl,
-                accords: accordsData.map(a => ({
-                    label_en: a.label_en,
-                    label: a.label_fr,
-                    color: a.hex_color,
-                    percentage: a.percentage
-                })),
+                accords: accordsData.map(a => {
+                    const acc = a.accords || {};
+                    return {
+                        label_en: acc.label_en || '',
+                        label: acc.label_fr || '',
+                        color: acc.hex_color || '#cccccc',
+                        percentage: a.percentage || 0
+                    };
+                }),
                 seasons: {},
                 daytime: {},
-                pyramid: {}
+                pyramid: {},
+                pyramid_fr: {},
+                pyramid_ar: {}
             };
             
             // Reconstruct Periods (Seasons & Day/Night)
@@ -82,17 +98,32 @@ async function loadProducts() {
             const dayReverseMap = { 'day': 'Jour', 'night': 'Nuit' };
             
             (p.product_wear_times || []).forEach(w => {
-                if (seasonReverseMap[w.period]) pObj.seasons[seasonReverseMap[w.period]] = w.percentage;
-                if (dayReverseMap[w.period]) pObj.daytime[dayReverseMap[w.period]] = w.percentage;
+                const perObj = w.periods;
+                if (!perObj) return;
+                
+                const periodEn = perObj.period_en;
+                if (seasonReverseMap[periodEn]) pObj.seasons[seasonReverseMap[periodEn]] = w.percentage;
+                if (dayReverseMap[periodEn]) pObj.daytime[dayReverseMap[periodEn]] = w.percentage;
             });
             
-            // Reconstruct Pyramids
+            // Reconstruct Pyramids with all 3 languages
             const pyramidReverseMap = { 'top': 'Notes de tête', 'middle': 'Notes de cœur', 'base': 'Notes de fond' };
             notesData.forEach(n => {
                 const frKey = pyramidReverseMap[n.level];
-                if (frKey) {
+                const noteObj = n.notes;
+                
+                if (frKey && noteObj) {
+                    // English (Fallback + Base array)
                     if (!pObj.pyramid[frKey]) pObj.pyramid[frKey] = [];
-                    pObj.pyramid[frKey].push(n.note_name);
+                    pObj.pyramid[frKey].push(noteObj.note_name_en);
+                    
+                    // French
+                    if (!pObj.pyramid_fr[frKey]) pObj.pyramid_fr[frKey] = [];
+                    pObj.pyramid_fr[frKey].push(noteObj.note_name_fr || noteObj.note_name_en);
+                    
+                    // Arabic
+                    if (!pObj.pyramid_ar[frKey]) pObj.pyramid_ar[frKey] = [];
+                    pObj.pyramid_ar[frKey].push(noteObj.note_name_ar || noteObj.note_name_en);
                 }
             });
             

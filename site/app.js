@@ -315,7 +315,7 @@ function renderSearchDropdown(results, dropdownEl, query) {
         return;
     }
 
-    dropdownEl.innerHTML = results.map(p => `
+    let html = results.map(p => `
     <div class="search-dropdown-item" data-sku="${p.sku}">
       <img src="${p.image}" alt="${p.nom}" onerror="this.style.display='none'">
       <div class="sdi-info">
@@ -326,9 +326,17 @@ function renderSearchDropdown(results, dropdownEl, query) {
     </div>
   `).join('');
 
+    // Add "Afficher tout" button
+    html += `
+    <div class="search-dropdown-item show-all-btn" style="justify-content:center; color:var(--color-accent); font-weight:600; padding:1rem; border-top:1px solid var(--color-border); text-align:center;">
+        ${t('show_all')}
+    </div>
+    `;
+
+    dropdownEl.innerHTML = html;
     dropdownEl.classList.remove('hidden');
 
-    dropdownEl.querySelectorAll('.search-dropdown-item:not(.no-results)').forEach(item => {
+    dropdownEl.querySelectorAll('.search-dropdown-item:not(.no-results):not(.show-all-btn)').forEach(item => {
         item.addEventListener('click', () => {
             const product = allProducts.find(p => p.sku === item.dataset.sku);
             if (product) {
@@ -337,6 +345,13 @@ function renderSearchDropdown(results, dropdownEl, query) {
             }
         });
     });
+
+    const showAllBtn = dropdownEl.querySelector('.show-all-btn');
+    if (showAllBtn) {
+        showAllBtn.addEventListener('click', () => {
+            performFullSearch(query);
+        });
+    }
 }
 
 function setupSearch(inputEl, dropdownEl, clearBtnEl, searchBtnEl) {

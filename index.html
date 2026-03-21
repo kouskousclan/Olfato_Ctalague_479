@@ -30,11 +30,13 @@
       <div class="search-container" id="search-container">
         <input type="text" id="search-input" data-i18n-placeholder="search_header_placeholder"
           placeholder="Rechercher un parfum..." autocomplete="off">
-        <svg id="header-search-btn" class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer; pointer-events:auto; z-index:10;">
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-        <svg id="header-clear-btn" class="clear-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer; position:absolute; right:12px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--color-text-dim); z-index:10;">
+        <button id="header-search-btn" class="header-search-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
+        <svg id="header-clear-btn" class="clear-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer; position:absolute; right:45px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--color-text-dim); z-index:10;">
           <line x1="18" y1="6" x2="6" y2="18" />
           <line x1="6" y1="6" x2="18" y2="18" />
         </svg>

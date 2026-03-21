@@ -442,6 +442,25 @@ function openProductModal(product) {
     history.pushState({ modalOpen: true }, '', `#${product.sku}`);
     isModalOpen = true;
 
+    // --- Dynamic SEO Updates ---
+    document.title = `${product.nom} | Olfato House`;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+        // Fallback sequentially in case descriptions are empty depending on language config
+        let desc = product.description_fr || product.description_en || product.description_ar || "Découvrez ce parfum exclusif par Olfato House.";
+        // Truncate cleanly around 155 chars for SEO perfection
+        if (desc.length > 155) {
+            desc = desc.substring(0, 155) + '...';
+        }
+        metaDesc.setAttribute('content', desc);
+    }
+    // Update Open Graph (usually needed if crawlers run JS)
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute('content', `${product.nom} | Olfato House`);
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute('content', metaDesc.getAttribute('content'));
+    // ---------------------------
+
     setTimeout(() => {
         body.querySelectorAll('.accord-fill').forEach(bar => {
             bar.style.width = bar.dataset.width;
@@ -456,6 +475,17 @@ function closeProductModal(fromHistory = false) {
     modal.classList.add('hidden');
     document.body.style.overflow = '';
     isModalOpen = false;
+
+    // --- Restore Default SEO ---
+    document.title = "Olfato House — Catalogue de Parfums";
+    const defaultDesc = "Olfato House - The Art of Perfume. Découvrez notre collection exclusive de parfums pour homme, femme et unisex.";
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', defaultDesc);
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute('content', "Olfato House — Catalogue de Parfums");
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute('content', defaultDesc);
+    // ---------------------------
 
     // If modal was closed via X button/overlay, go back to remove the pushed state
     if (!fromHistory) {

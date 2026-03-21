@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://olfato-ctalague-479.vercel.app/sitemap.xml

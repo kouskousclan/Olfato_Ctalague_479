@@ -48,6 +48,7 @@ const TRANSLATIONS = {
         image_unavailable: "Image non disponible",
         description: "Description",
         results_for: "Résultats pour \"{query}\"",
+        no_results: "Aucun résultat trouvé",
 
         // Footer
         footer_text: "© 2026 Olfato House — The Art of Perfume",
@@ -155,6 +156,7 @@ const TRANSLATIONS = {
         image_unavailable: "Image not available",
         description: "Description",
         results_for: "Results for \"{query}\"",
+        no_results: "No results found",
 
         footer_text: "© 2026 Olfato House — The Art of Perfume",
 
@@ -258,6 +260,7 @@ const TRANSLATIONS = {
         image_unavailable: "الصورة غير متوفرة",
         description: "الوصف",
         results_for: "نتائج البحث عن \"{query}\"",
+        no_results: "لا توجد نتائج",
 
         footer_text: "© 2026 Olfato House — فن العطور",
 

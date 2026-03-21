@@ -413,6 +413,8 @@ function performFullSearch(query) {
 // ============================================
 // PRODUCT MODAL (Product Page)
 // ============================================
+let isModalOpen = false;
+
 function openProductModal(product) {
     const modal = document.getElementById('product-modal');
     const body = document.getElementById('modal-body');
@@ -421,6 +423,10 @@ function openProductModal(product) {
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 
+    // Push state for mobile "back" button functionality
+    history.pushState({ modalOpen: true }, '', `#${product.sku}`);
+    isModalOpen = true;
+
     setTimeout(() => {
         body.querySelectorAll('.accord-fill').forEach(bar => {
             bar.style.width = bar.dataset.width;
@@ -428,10 +434,18 @@ function openProductModal(product) {
     }, 100);
 }
 
-function closeProductModal() {
+function closeProductModal(fromHistory = false) {
     const modal = document.getElementById('product-modal');
+    if (modal.classList.contains('hidden')) return;
+
     modal.classList.add('hidden');
     document.body.style.overflow = '';
+    isModalOpen = false;
+
+    // If modal was closed via X button/overlay, go back to remove the pushed state
+    if (!fromHistory) {
+        history.back();
+    }
 }
 
 function getNoteImage(noteName) {
@@ -719,11 +733,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load more
     document.getElementById('load-more-btn').addEventListener('click', renderPage);
 
+    // Filter hash changes on load so we don't open broken modals
+    if (window.location.hash) {
+        history.replaceState(null, '', window.location.pathname);
+    }
+
+    // Handle back button / mobile swipe back to close modal
+    window.addEventListener('popstate', (e) => {
+        if (isModalOpen) {
+            closeProductModal(true); // Closed by history
+        }
+    });
+
     // Modal close
-    document.getElementById('modal-close').addEventListener('click', closeProductModal);
-    document.getElementById('modal-overlay').addEventListener('click', closeProductModal);
+    document.getElementById('modal-close').addEventListener('click', () => closeProductModal(false));
+    document.getElementById('modal-overlay').addEventListener('click', () => closeProductModal(false));
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeProductModal();
+        if (e.key === 'Escape') closeProductModal(false);
     });
 
     // Scroll behavior

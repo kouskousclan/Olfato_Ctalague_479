@@ -1,5 +1,5 @@
 /* ============================================
-   OLFATO HOUSE — Internationalization (i18n)
+   L'ARTISTE PARFUM — Internationalization (i18n)
    Supports: Français (fr), English (en), العربية (ar)
    ============================================ */
 
@@ -52,7 +52,7 @@ const TRANSLATIONS = {
         show_all: "Afficher tout",
 
         // Footer
-        footer_text: "© 2026 Olfato House — The Art of Perfume",
+        footer_text: "© 2026 L'artiste Parfum — The Art of Perfume",
 
         // Genre badges
         genre_homme: "Homme",
@@ -160,7 +160,7 @@ const TRANSLATIONS = {
         no_results: "No results found",
         show_all: "Show all",
 
-        footer_text: "© 2026 Olfato House — The Art of Perfume",
+        footer_text: "© 2026 L'artiste Parfum — The Art of Perfume",
 
         genre_homme: "Men",
         genre_femme: "Women",
@@ -265,7 +265,7 @@ const TRANSLATIONS = {
         no_results: "لا توجد نتائج",
         show_all: "عرض الكل",
 
-        footer_text: "© 2026 Olfato House — فن العطور",
+        footer_text: "© 2026 L'artiste Parfum — فن العطور",
 
         genre_homme: "رجالي",
         genre_femme: "نسائي",

@@ -1585,6 +1585,9 @@ button {
    FLOATING WHATSAPP BUTTON
    ============================================ */
 #whatsapp-float {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.7);
   position: fixed;
   bottom: 2rem;
   left: 2rem;
@@ -1598,8 +1601,14 @@ button {
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: opacity 0.35s ease, transform 0.35s ease, box-shadow 0.25s ease;
   text-decoration: none;
+}
+
+#whatsapp-float.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
 }
 
 #whatsapp-float:hover {
@@ -1626,3 +1635,4 @@ button {
 #whatsapp-float:hover::before {
   opacity: 1;
 }
+

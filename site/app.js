@@ -838,5 +838,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Listen for language changes
     window.addEventListener('languageChanged', onLanguageChanged);
+
+    // ============================================
+    // FLOATING WHATSAPP — Show only when hero CTA is out of view
+    // ============================================
+    const waFloat = document.getElementById('whatsapp-float');
+    const heroCta = document.querySelector('.hero-whatsapp-cta');
+
+    if (waFloat && heroCta) {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    // Hero CTA visible → hide float. Hero CTA gone → show float.
+                    if (entry.isIntersecting) {
+                        waFloat.classList.remove('visible');
+                    } else {
+                        waFloat.classList.add('visible');
+                    }
+                });
+            },
+            { threshold: 0.1 }
+        );
+        observer.observe(heroCta);
+    }
 });
 

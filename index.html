@@ -4,31 +4,106 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>L'artiste Parfum — Catalogue de Parfums</title>
-  <meta name="description" content="L'artiste Parfum - The Art of Perfume. Découvrez notre collection exclusive de parfums pour homme, femme et unisex.">
-  <meta name="keywords" content="parfum, l'artiste parfum, parfum homme, parfum femme, unisex, fragrances, oriental, arabian">
+
+  <!-- ===== SEO PRIMAIRE ===== -->
+  <title>L'artiste Parfum — Vente Parfums au Maroc | Homme · Femme · Unisex</title>
+  <meta name="description" content="Achetez vos parfums en ligne au Maroc avec L'artiste Parfum. Collection homme, femme et unisex. Commandez facilement sur WhatsApp. Livraison Maroc.">
+  <meta name="keywords" content="parfum maroc, l'artiste parfum, lartiste parfum, parfum homme maroc, parfum femme maroc, acheter parfum en ligne maroc, parfum oriental maroc, parfum unisex maroc">
   <meta name="author" content="L'artiste Parfum">
-  <link rel="canonical" href="https://olfato-ctalague-479.vercel.app/">
+  <meta name="robots" content="index, follow">
+  <meta name="geo.region" content="MA">
+  <meta name="geo.placename" content="Maroc">
+  <link rel="canonical" href="https://lartisteparfum.art/">
 
-  <!-- Open Graph / Facebook -->
+  <!-- ===== OPEN GRAPH ===== -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://olfato-ctalague-479.vercel.app/">
-  <meta property="og:title" content="L'artiste Parfum — Catalogue de Parfums">
-  <meta property="og:description" content="L'artiste Parfum - The Art of Perfume. Découvrez notre collection exclusive de parfums pour homme, femme et unisex.">
-  <meta property="og:image" content="site/assets/lartiste.png">
+  <meta property="og:url" content="https://lartisteparfum.art/">
+  <meta property="og:title" content="L'artiste Parfum — Vente Parfums au Maroc">
+  <meta property="og:description" content="Achetez vos parfums en ligne au Maroc. Collection homme, femme et unisex. Commander sur WhatsApp.">
+  <meta property="og:image" content="https://lartisteparfum.art/site/assets/lartiste.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="L'artiste Parfum">
+  <meta property="og:locale" content="fr_MA">
 
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="https://olfato-ctalague-479.vercel.app/">
-  <meta property="twitter:title" content="L'artiste Parfum — Catalogue de Parfums">
-  <meta property="twitter:description" content="L'artiste Parfum - The Art of Perfume. Découvrez notre collection exclusive de parfums pour homme, femme et unisex.">
-  <meta property="twitter:image" content="site/assets/lartiste.png">
+  <!-- ===== TWITTER CARD ===== -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="L'artiste Parfum — Vente Parfums au Maroc">
+  <meta name="twitter:description" content="Achetez vos parfums en ligne au Maroc. Collection homme, femme et unisex.">
+  <meta name="twitter:image" content="https://lartisteparfum.art/site/assets/lartiste.png">
 
+  <!-- ===== SCHEMA.ORG JSON-LD ===== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://lartisteparfum.art/#organization",
+        "name": "L'artiste Parfum",
+        "url": "https://lartisteparfum.art",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://lartisteparfum.art/site/assets/lartiste.png"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+212777885769",
+          "contactType": "customer service",
+          "availableLanguage": ["French", "Arabic"]
+        },
+        "areaServed": "MA",
+        "sameAs": [
+          "https://wa.me/212777885769"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://lartisteparfum.art/#website",
+        "url": "https://lartisteparfum.art",
+        "name": "L'artiste Parfum",
+        "description": "Vente de parfums en ligne au Maroc — Homme, Femme, Unisex",
+        "publisher": { "@id": "https://lartisteparfum.art/#organization" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://lartisteparfum.art/?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "Store",
+        "name": "L'artiste Parfum",
+        "url": "https://lartisteparfum.art",
+        "description": "Boutique en ligne de parfums au Maroc. Collection exclusive homme, femme et unisex.",
+        "priceRange": "MAD",
+        "servesCuisine": "Parfumerie",
+        "areaServed": {
+          "@type": "Country",
+          "name": "Maroc"
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- ===== PERFORMANCE ===== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://mkomrppcdrgbpfybrfyu.supabase.co">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preload" href="site/assets/lartiste.png" as="image">
+
+  <!-- ===== FAVICON ===== -->
   <link rel="icon" href="site/assets/lartiste.png" type="image/png">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Cairo:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="site/style.css?v=20">
+
+  <!-- ===== FONTS ===== -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- ===== CSS ===== -->
+  <link rel="stylesheet" href="site/style.css?v=21">
 </head>
 
 <body>
@@ -38,7 +113,7 @@
       <a href="index.html" class="logo-link">
         <img src="site/assets/lartiste.png" alt="L'artiste Parfum" class="logo" id="main-logo">
       </a>
-      <nav id="main-nav">
+      <nav id="main-nav" aria-label="Navigation principale">
         <a href="#" class="nav-link active" data-filter="all" data-i18n="nav_all">Tous</a>
         <a href="#" class="nav-link" data-filter="Homme" data-i18n="nav_homme">Homme</a>
         <a href="#" class="nav-link" data-filter="Femme" data-i18n="nav_femme">Femme</a>
@@ -71,7 +146,7 @@
   <!-- HERO -->
   <section id="hero">
     <div class="hero-bg">
-      <video class="hero-video" src="site/assets/Hero_vid_2.mp4" autoplay loop muted playsinline></video>
+      <video class="hero-video" src="site/assets/Hero_vid_2.mp4" poster="site/assets/lartiste.png" autoplay loop muted playsinline aria-hidden="true"></video>
       <div class="hero-overlay"></div>
     </div>
     <div class="hero-content">
@@ -122,9 +197,9 @@
   </section>
 
   <!-- CATALOG -->
-  <section id="catalog">
+  <section id="catalog" aria-label="Catalogue de parfums">
     <div class="catalog-header">
-      <h1 id="catalog-title" data-i18n="collection_title">Notre Collection</h1>
+      <h1 id="catalog-title" data-i18n="collection_title">Parfums Homme, Femme &amp; Unisex — L'artiste Parfum Maroc</h1>
       <span id="product-count" class="product-count"></span>
     </div>
     <div id="product-grid" class="product-grid"></div>
@@ -171,10 +246,25 @@
   <!-- FOOTER -->
   <footer id="footer">
     <div class="footer-inner">
-      <img src="site/assets/lartiste.png" alt="L'artiste Parfum" class="footer-logo">
+      <img src="site/assets/lartiste.png" alt="L'artiste Parfum — Boutique de parfums en ligne au Maroc" class="footer-logo" width="200" height="80">
       <p class="footer-text" data-i18n="footer_text">© 2026 L'artiste Parfum — The Art of Perfume</p>
+      <nav aria-label="Liens utiles" style="margin-top:0.5rem">
+        <a href="https://wa.me/212777885769" rel="noopener" style="color:var(--color-text-dim);font-size:0.8rem;">Commander sur WhatsApp</a>
+      </nav>
     </div>
   </footer>
+
+  <!-- NOSCRIPT : contenu statique pour Googlebot -->
+  <noscript>
+    <div style="padding:2rem;color:#333">
+      <h1>L'artiste Parfum — Catalogue de Parfums au Maroc</h1>
+      <p>Découvrez notre collection exclusive de parfums pour homme, femme et unisex. Commandez facilement via WhatsApp au +212 777 885 769.</p>
+      <h2>Parfums Homme</h2><p>Collection de fragrances masculines : oriental, boisé, frais.</p>
+      <h2>Parfums Femme</h2><p>Collection de fragrances féminines : floral, fruité, oriental.</p>
+      <h2>Parfums Unisex</h2><p>Collection de fragrances mixtes pour tous.</p>
+      <p>Livraison au Maroc. Contactez-nous sur WhatsApp : +212 777 885 769</p>
+    </div>
+  </noscript>
 
   <script defer src="/_vercel/insights/script.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

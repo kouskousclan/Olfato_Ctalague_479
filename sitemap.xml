@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
-    <loc>https://olfato-ctalague-479.vercel.app/</loc>
-    <lastmod>2026-04-14</lastmod>
+    <loc>https://lartisteparfum.art/</loc>
+    <lastmod>2026-04-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://lartisteparfum.art/site/assets/lartiste.png</image:loc>
+      <image:title>L'artiste Parfum — Boutique de parfums en ligne au Maroc</image:title>
+    </image:image>
   </url>
 </urlset>

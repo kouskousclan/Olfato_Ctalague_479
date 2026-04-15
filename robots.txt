@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://olfato-ctalague-479.vercel.app/sitemap.xml
+# Bloquer les fichiers non pertinents pour l'indexation
+Disallow: /database/
+Disallow: /.git/
+Disallow: /.venv/
+
+Sitemap: https://lartisteparfum.art/sitemap.xml

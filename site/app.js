@@ -459,6 +459,36 @@ function openProductModal(product) {
     if (ogTitle) ogTitle.setAttribute('content', `${product.nom} | L'artiste Parfum`);
     const ogDesc = document.querySelector('meta[property="og:description"]');
     if (ogDesc) ogDesc.setAttribute('content', metaDesc.getAttribute('content'));
+
+    // ---- Schema.org Product dynamique ----
+    let schemaEl = document.getElementById('schema-product');
+    if (!schemaEl) {
+        schemaEl = document.createElement('script');
+        schemaEl.type = 'application/ld+json';
+        schemaEl.id = 'schema-product';
+        document.head.appendChild(schemaEl);
+    }
+    const accords = (product.accords || []).map(a => a.label_en || a.label).join(', ');
+    schemaEl.textContent = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": product.nom,
+        "description": product.description_fr || product.description_en || `Parfum ${product.genre} — ${accords}`,
+        "image": product.image,
+        "brand": {
+            "@type": "Brand",
+            "name": "L'artiste Parfum"
+        },
+        "offers": {
+            "@type": "Offer",
+            "seller": { "@type": "Organization", "name": "L'artiste Parfum" },
+            "priceCurrency": "MAD",
+            "availability": "https://schema.org/InStock",
+            "url": `https://lartisteparfum.art/#${product.sku}`
+        },
+        "category": `Parfum ${product.genre}`,
+        "sku": product.sku
+    });
     // ---------------------------
 
     setTimeout(() => {

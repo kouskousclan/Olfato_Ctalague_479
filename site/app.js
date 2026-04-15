@@ -18,6 +18,11 @@ let searchTimeout = null;
 // ============================================
 // UTILS
 // ============================================
+/**
+ * Shuffle an array in-place using Fisher-Yates algorithm.
+ * @param {Array} array
+ * @returns {Array}
+ */
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -29,8 +34,12 @@ function shuffleArray(array) {
 // ============================================
 // DATA LOADING
 // ============================================
+/**
+ * Fetch all products from Supabase, transform the relational data
+ * into the flat structure expected by the UI, then render the catalog.
+ * @returns {Promise<void>}
+ */
 async function loadProducts() {
-    console.log("Executing loadProducts()...");
     try {
         const { data: dbProducts, error } = await supabaseClient
             .from('products')
@@ -134,7 +143,6 @@ async function loadProducts() {
         shuffleArray(allProducts);
         
         filteredProducts = [...allProducts];
-        console.log("✅ Successfully mapped products. AllProducts length:", allProducts.length);
         updateCatalog();
         updateProductCount();
     } catch (e) {
@@ -146,6 +154,10 @@ async function loadProducts() {
 // ============================================
 // FILTERING
 // ============================================
+/**
+ * Filter the catalog by genre and re-render.
+ * @param {'all'|'Homme'|'Femme'|'Unisex'} genre
+ */
 function applyFilter(genre) {
     currentFilter = genre;
     currentPage = 0;
@@ -172,6 +184,7 @@ function applyFilter(genre) {
     catalog.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+/** Update the visible product count label. */
 function updateProductCount() {
     const el = document.getElementById('product-count');
     el.textContent = tCount(filteredProducts.length);
@@ -180,6 +193,7 @@ function updateProductCount() {
 // ============================================
 // CATALOG RENDERING
 // ============================================
+/** Clear the product grid and render the first page of filteredProducts. */
 function updateCatalog() {
     const grid = document.getElementById('product-grid');
     grid.innerHTML = '';
@@ -187,6 +201,7 @@ function updateCatalog() {
     renderPage();
 }
 
+/** Append the next page of product cards to the grid and update the "load more" button. */
 function renderPage() {
     const grid = document.getElementById('product-grid');
     const start = currentPage * PRODUCTS_PER_PAGE;
@@ -211,9 +226,17 @@ function renderPage() {
     currentPage++;
 }
 
+/**
+ * Build and return a button element representing a product card.
+ * @param {object} product - Product data object
+ * @param {number} index - Position index used for staggered animation delay
+ * @returns {HTMLButtonElement}
+ */
 function createProductCard(product, index) {
-    const card = document.createElement('div');
+    const card = document.createElement('button');
     card.className = 'product-card';
+    card.type = 'button';
+    card.setAttribute('aria-label', `Voir ${product.nom} — ${product.inspiration}`);
     card.style.animationDelay = `${(index % PRODUCTS_PER_PAGE) * 0.04}s`;
     card.onclick = () => openProductModal(product);
 
@@ -227,7 +250,7 @@ function createProductCard(product, index) {
 
     card.innerHTML = `
     <div class="product-card-img">
-      <img src="${product.image}" alt="${product.nom} — Parfum ${product.genre} au Maroc | L'artiste Parfum" loading="lazy" onerror="this.style.display='none'">
+      <img src="${product.image}" alt="${product.nom} — Parfum ${product.genre} au Maroc | L'artiste Parfum" loading="lazy" decoding="async" onerror="this.style.display='none'">
       <span class="product-card-genre" data-genre="${product.genre}">${tGenre(product.genre)}</span>
     </div>
     <div class="product-card-info">
@@ -243,6 +266,12 @@ function createProductCard(product, index) {
 // ============================================
 // SEARCH
 // ============================================
+/**
+ * Score and rank all products against the search query.
+ * Returns products sorted by relevance (name > brand > accords > notes).
+ * @param {string} query
+ * @returns {object[]}
+ */
 function getSearchResults(query) {
     if (!query || query.length < 2) return [];
     
@@ -300,6 +329,11 @@ function getSearchResults(query) {
       .map(x => x.product);
 }
 
+/**
+ * Return the top 8 search results for the autocomplete dropdown.
+ * @param {string} query
+ * @returns {object[]}
+ */
 function searchProducts(query) {
     return getSearchResults(query).slice(0, 8);
 }
@@ -317,7 +351,7 @@ function renderSearchDropdown(results, dropdownEl, query) {
 
     let html = results.map(p => `
     <div class="search-dropdown-item" data-sku="${p.sku}">
-      <img src="${p.image}" alt="${p.nom}" onerror="this.style.display='none'">
+      <img src="${p.image}" alt="${p.nom}" loading="lazy" decoding="async" onerror="this.style.display='none'">
       <div class="sdi-info">
         <div class="sdi-name">${p.nom}</div>
         <div class="sdi-brand">${p.inspiration}</div>
@@ -406,6 +440,11 @@ function setupSearch(inputEl, dropdownEl, clearBtnEl, searchBtnEl) {
     });
 }
 
+/**
+ * Run a full-catalog search and update the grid with results.
+ * Resets the active filter and scrolls to the catalog section.
+ * @param {string} query
+ */
 function performFullSearch(query) {
     query = query.trim();
     if (query.length >= 2) {
@@ -430,6 +469,11 @@ function performFullSearch(query) {
 // ============================================
 let isModalOpen = false;
 
+/**
+ * Open the product detail modal for a given product.
+ * Also updates SEO meta tags and Schema.org JSON-LD dynamically.
+ * @param {object} product
+ */
 function openProductModal(product) {
     const modal = document.getElementById('product-modal');
     const body = document.getElementById('modal-body');
@@ -498,6 +542,10 @@ function openProductModal(product) {
     }, 100);
 }
 
+/**
+ * Close the product detail modal and restore default SEO meta tags.
+ * @param {boolean} [fromHistory=false] - True when triggered by browser back navigation
+ */
 function closeProductModal(fromHistory = false) {
     const modal = document.getElementById('product-modal');
     if (modal.classList.contains('hidden')) return;
@@ -830,7 +878,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Handle back button / mobile swipe back to close modal
-    window.addEventListener('popstate', (e) => {
+    window.addEventListener('popstate', () => {
         if (isModalOpen) {
             closeProductModal(true); // Closed by history
         }

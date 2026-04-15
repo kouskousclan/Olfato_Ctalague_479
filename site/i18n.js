@@ -429,7 +429,9 @@ function setLanguage(lang) {
 
     // Update lang switcher active state
     document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.lang === lang);
+        const isActive = btn.dataset.lang === lang;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
     });
 
     // Trigger custom event for app.js to re-render dynamic content

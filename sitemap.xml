@@ -11,4 +11,10 @@
       <image:title>L'artiste Parfum — Boutique de parfums en ligne au Maroc</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://lartisteparfum.art/about.html</loc>
+    <lastmod>2026-04-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>

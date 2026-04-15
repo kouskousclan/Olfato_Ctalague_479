@@ -1,0 +1,31 @@
+# lartisteparfum.art — AI Search & LLM Context
+# https://lartisteparfum.art/llms.txt
+
+## Site Overview
+L'artiste Parfum is an online perfume boutique based in Morocco, selling high-quality fragrances for men, women, and unisex.
+
+## Business
+- Name: L'artiste Parfum
+- Type: E-commerce / Online perfume boutique
+- Location: Morocco (Maroc)
+- Language: French, Arabic, English
+- Contact: WhatsApp +212777885769
+- URL: https://lartisteparfum.art
+
+## Products
+- Men's fragrances (Parfums Homme)
+- Women's fragrances (Parfums Femme)
+- Unisex fragrances
+- Oriental, woody, floral and Arabian scents
+- Inspirations from luxury perfume houses
+
+## Delivery
+- Ships across Morocco: Casablanca, Rabat, Marrakech, Fes, Tangier
+- Order via WhatsApp
+
+## Allowed AI Crawlers
+- All AI search engines and LLM crawlers are welcome
+- Content may be cited for informational purposes
+
+## Sitemap
+https://lartisteparfum.art/sitemap.xml

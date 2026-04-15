@@ -227,7 +227,7 @@ function createProductCard(product, index) {
 
     card.innerHTML = `
     <div class="product-card-img">
-      <img src="${product.image}" alt="${product.nom}" loading="lazy" onerror="this.style.display='none'">
+      <img src="${product.image}" alt="${product.nom} — Parfum ${product.genre} au Maroc | L'artiste Parfum" loading="lazy" onerror="this.style.display='none'">
       <span class="product-card-genre" data-genre="${product.genre}">${tGenre(product.genre)}</span>
     </div>
     <div class="product-card-info">

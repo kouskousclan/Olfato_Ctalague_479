@@ -20,6 +20,12 @@
   <meta name="apple-mobile-web-app-title" content="L'artiste Parfum">
   <link rel="canonical" href="https://lartisteparfum.art/">
 
+  <!-- ===== HREFLANG (i18n SEO) ===== -->
+  <link rel="alternate" hreflang="fr" href="https://lartisteparfum.art/">
+  <link rel="alternate" hreflang="en" href="https://lartisteparfum.art/">
+  <link rel="alternate" hreflang="ar" href="https://lartisteparfum.art/">
+  <link rel="alternate" hreflang="x-default" href="https://lartisteparfum.art/">
+
   <!-- ===== OPEN GRAPH ===== -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://lartisteparfum.art/">
@@ -91,6 +97,32 @@
         }
       }
     ]
+  }
+  </script>
+
+  <!-- ===== SCHEMA.ORG LocalBusiness ===== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": "https://lartisteparfum.art/#localbusiness",
+    "name": "L'artiste Parfum",
+    "description": "Boutique de parfums en ligne au Maroc. Collection exclusive homme, femme et unisex. Livraison partout au Maroc.",
+    "url": "https://lartisteparfum.art",
+    "telephone": "+212777885769",
+    "priceRange": "MAD",
+    "image": "https://lartisteparfum.art/site/assets/lartiste.png",
+    "address": { "@type": "PostalAddress", "addressCountry": "MA", "addressRegion": "Maroc" },
+    "areaServed": [
+      { "@type": "City", "name": "Casablanca" },
+      { "@type": "City", "name": "Rabat" },
+      { "@type": "City", "name": "Marrakech" },
+      { "@type": "City", "name": "Fès" },
+      { "@type": "City", "name": "Tanger" },
+      { "@type": "Country", "name": "Maroc" }
+    ],
+    "openingHours": "Mo-Su 09:00-22:00",
+    "sameAs": ["https://wa.me/212777885769"]
   }
   </script>
 
@@ -191,6 +223,7 @@
         <a href="#" class="nav-link" data-filter="Homme" data-i18n="nav_homme">Homme</a>
         <a href="#" class="nav-link" data-filter="Femme" data-i18n="nav_femme">Femme</a>
         <a href="#" class="nav-link" data-filter="Unisex" data-i18n="nav_unisex">Unisex</a>
+        <a href="about.html" class="nav-link" style="color:var(--color-accent)">À propos</a>
       </nav>
       <div class="search-container" id="search-container">
         <input type="text" id="search-input" data-i18n-placeholder="search_header_placeholder"
@@ -316,41 +349,6 @@
     </svg>
   </a>
 
-  <!-- SEO CONTENT SECTION — Indexable par Google, visuellement discret -->
-  <section id="seo-content" aria-label="À propos de L'artiste Parfum" style="background:var(--color-surface);padding:3rem 2rem;margin-top:2rem;">
-    <div style="max-width:900px;margin:0 auto;">
-      <h2 style="font-family:var(--font-heading);color:var(--color-accent);margin-bottom:1rem;font-size:1.5rem;">L'artiste Parfum — Boutique de Parfums en Ligne au Maroc</h2>
-      <p style="color:var(--color-text-muted);line-height:1.8;margin-bottom:1.5rem;">
-        Bienvenue chez <strong>L'artiste Parfum</strong>, votre destination de référence pour l'achat de parfums de qualité au Maroc.
-        Nous proposons une collection exclusive de <strong>parfums homme</strong>, <strong>parfums femme</strong> et <strong>parfums unisex</strong>,
-        avec des fragrances orientales, boisées, florales et arabiennes. Découvrez des inspirations des plus grandes maisons de parfumerie mondiale,
-        accessibles à des prix justes, livrées dans tout le Maroc.
-      </p>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;">
-        <div>
-          <h3 style="color:var(--color-text);font-size:1rem;margin-bottom:0.5rem;">🎯 Parfums Homme au Maroc</h3>
-          <p style="color:var(--color-text-muted);font-size:0.875rem;line-height:1.7;">
-            Notre collection masculine réunit des fragrances intenses et raffinées. Des accords boisés, orientaux et frais,
-            inspirés des plus grands parfums pour hommes comme Sauvage, Bleu de Chanel, Terre d'Hermès.
-          </p>
-        </div>
-        <div>
-          <h3 style="color:var(--color-text);font-size:1rem;margin-bottom:0.5rem;">🌸 Parfums Femme au Maroc</h3>
-          <p style="color:var(--color-text-muted);font-size:0.875rem;line-height:1.7;">
-            Des fragrances féminines envoûtantes : florales, fruitées et orientales. Découvrez nos inspirations des maisons Lancôme,
-            Dior, YSL, Chanel — à des prix accessibles au Maroc.
-          </p>
-        </div>
-        <div>
-          <h3 style="color:var(--color-text);font-size:1rem;margin-bottom:0.5rem;">⚡ Commander sur WhatsApp</h3>
-          <p style="color:var(--color-text-muted);font-size:0.875rem;line-height:1.7;">
-            Commandez vos parfums simplement via WhatsApp au <strong>+212 777 885 769</strong>.
-            Livraison rapide partout au Maroc : Casablanca, Rabat, Marrakech, Fès, Tanger et toutes les villes.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- FOOTER -->
   <footer id="footer">
@@ -358,6 +356,8 @@
       <img src="site/assets/lartiste.png" alt="L'artiste Parfum — Boutique de parfums en ligne au Maroc" class="footer-logo" width="200" height="80">
       <p class="footer-text" data-i18n="footer_text">© 2026 L'artiste Parfum — The Art of Perfume</p>
       <nav aria-label="Liens utiles" style="margin-top:0.5rem">
+        <a href="about.html" style="color:var(--color-text-muted);font-size:0.8rem;">À propos</a>
+        &nbsp;|&nbsp;
         <a href="https://wa.me/212777885769" rel="noopener" style="color:var(--color-text-dim);font-size:0.8rem;">Commander sur WhatsApp</a>
       </nav>
     </div>

@@ -752,6 +752,12 @@ function handleScroll() {
 // LANGUAGE CHANGE HANDLER
 // ============================================
 function onLanguageChanged() {
+    const lang = window.currentLang || 'fr';
+
+    // Update html lang + dir for SEO
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
     // Re-render dynamic content
     updateCatalog();
     updateProductCount();

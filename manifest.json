@@ -1,0 +1,24 @@
+{
+  "name": "L'artiste Parfum",
+  "short_name": "Lartiste",
+  "description": "Boutique de parfums en ligne au Maroc — Homme, Femme, Unisex",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#c9a96e",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "site/assets/lartiste.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "site/assets/lartiste.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["shopping", "lifestyle"],
+  "screenshots": []
+}

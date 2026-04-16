@@ -280,6 +280,10 @@ button {
   display: none;
 }
 
+.clear-icon.hidden {
+  display: none;
+}
+
 .search-dropdown-item {
   display: flex;
   align-items: center;
@@ -1177,7 +1181,7 @@ button {
 
 .footer-text {
   font-size: 0.8rem;
-  color: var(--color-text-dim);
+  color: var(--color-text-muted);
   letter-spacing: 0.05em;
 }
 
@@ -1573,7 +1577,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  background: #25D366;
+  background: #0e7a35;
   color: #fff;
   font-weight: 700;
   font-size: 1rem;
@@ -1581,14 +1585,14 @@ button {
   padding: 0.85rem 2rem;
   border-radius: 50px;
   text-decoration: none;
-  box-shadow: 0 4px 20px rgba(37, 211, 102, 0.35);
+  box-shadow: 0 4px 20px rgba(14, 122, 53, 0.4);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   animation: fadeIn 1s ease-out 0.6s both;
 }
 
 .hero-whatsapp-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 30px rgba(37, 211, 102, 0.5);
+  box-shadow: 0 8px 30px rgba(14, 122, 53, 0.55);
 }
 
 /* ============================================

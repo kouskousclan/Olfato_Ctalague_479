@@ -468,6 +468,25 @@ function performFullSearch(query) {
 // PRODUCT MODAL (Product Page)
 // ============================================
 let isModalOpen = false;
+let lastFocusedElement = null;
+
+/** Hide all body-level siblings of the modal from assistive technologies. */
+function hideBackgroundFromAT() {
+    document.querySelectorAll('body > *').forEach(el => {
+        if (el.id !== 'product-modal' && el.tagName !== 'SCRIPT') {
+            el.setAttribute('aria-hidden', 'true');
+        }
+    });
+}
+
+/** Restore visibility of all body-level siblings to assistive technologies. */
+function restoreBackgroundToAT() {
+    document.querySelectorAll('body > *').forEach(el => {
+        if (el.id !== 'product-modal' && el.tagName !== 'SCRIPT') {
+            el.removeAttribute('aria-hidden');
+        }
+    });
+}
 
 /**
  * Open the product detail modal for a given product.
@@ -478,13 +497,19 @@ function openProductModal(product) {
     const modal = document.getElementById('product-modal');
     const body = document.getElementById('modal-body');
 
+    lastFocusedElement = document.activeElement;
+
     body.innerHTML = buildProductPage(product);
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+    hideBackgroundFromAT();
 
     // Push state for mobile "back" button functionality
     history.pushState({ modalOpen: true }, '', `#${product.sku}`);
     isModalOpen = true;
+
+    // Move focus to the close button so screen readers enter the dialog
+    document.getElementById('modal-close').focus();
 
     // --- Dynamic SEO Updates ---
     document.title = `${product.nom} | L'artiste Parfum`;
@@ -553,6 +578,13 @@ function closeProductModal(fromHistory = false) {
     modal.classList.add('hidden');
     document.body.style.overflow = '';
     isModalOpen = false;
+    restoreBackgroundToAT();
+
+    // Restore focus to the element that opened the modal
+    if (lastFocusedElement) {
+        lastFocusedElement.focus();
+        lastFocusedElement = null;
+    }
 
     // --- Restore Default SEO ---
     document.title = "L'artiste Parfum — Catalogue de Parfums";
@@ -732,7 +764,7 @@ function buildProductPage(product) {
     <div class="product-page">
       <div class="product-left">
         <div class="product-title-section">
-          <h2 class="product-name">${product.nom}</h2>
+          <h2 class="product-name" id="modal-product-title">${product.nom}</h2>
           <p class="product-brand">${product.inspiration}</p>
           <span class="product-genre-tag" data-genre="${product.genre}">${genreLabel}</span>
         </div>

@@ -252,6 +252,9 @@ function createProductCard(product, index) {
     <div class="product-card-img">
       <img src="${product.image}" alt="${product.nom} — Parfum ${product.genre} au Maroc | L'artiste Parfum" loading="lazy" decoding="async" onerror="this.style.display='none'">
       <span class="product-card-genre" data-genre="${product.genre}">${tGenre(product.genre)}</span>
+      <button class="card-add-cart-btn" aria-label="${t('add_to_cart')}" onclick="event.stopPropagation(); addToCart('${product.sku}', '${product.nom.replace(/'/g, "\\'")}', '${product.image}', 50, 79);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 5v14M5 12h14"></path></svg>
+      </button>
     </div>
     <div class="product-card-info">
       <div class="product-card-name" title="${product.nom}">${product.nom}</div>
@@ -756,9 +759,31 @@ function buildProductPage(product) {
     `;
     }
 
-    // Build the WhatsApp message dynamically with product info
-    const waMessage = `Bonjour, je souhaite commander le parfum :\n\n🌸 *${product.nom}*\n📌 Réf: ${product.sku}\n💼 Catégorie: ${product.genre}\n\nMerci de me confirmer la disponibilité.`;
-    const waUrl = `https://wa.me/212777885769?text=${encodeURIComponent(waMessage)}`;
+    // ADD TO CART SECTION (replaces WhatsApp direct button)
+    const sizeSelectorHtml = `
+      <div class="info-card">
+        <div class="size-selector">
+          <div class="size-option-wrapper">
+            <input type="radio" name="size_${product.sku}" id="size_30_${product.sku}" value="30" class="size-option-input">
+            <label for="size_30_${product.sku}" class="size-option-label">
+              <span class="size-vol">${t('size_30')}</span>
+              <span class="size-price">${t('price_30')}</span>
+            </label>
+          </div>
+          <div class="size-option-wrapper">
+            <input type="radio" name="size_${product.sku}" id="size_50_${product.sku}" value="50" class="size-option-input" checked>
+            <label for="size_50_${product.sku}" class="size-option-label">
+              <span class="size-vol">${t('size_50')}</span>
+              <span class="size-price">${t('price_50')}</span>
+            </label>
+          </div>
+        </div>
+        <button class="add-to-cart-btn" onclick="addFromModal('${product.sku}', '${product.nom.replace(/'/g, "\\'")}', '${product.image}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M9 20a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm7 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-9.8-2h11.6a2 2 0 0 0 1.9-1.5l1.5-6A2 2 0 0 0 19.3 8H6M3 4h2l1 4"></path></svg>
+          <span data-i18n="add_to_cart">${t('add_to_cart')}</span>
+        </button>
+      </div>
+    `;
 
     return `
     <div class="product-page">
@@ -774,12 +799,7 @@ function buildProductPage(product) {
         ${pyramidHtml}
       </div>
       <div class="product-right">
-        <a href="${waUrl}" target="_blank" class="whatsapp-order-btn" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.82 9.82 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
-          </svg>
-          Commander sur WhatsApp
-        </a>
+        ${sizeSelectorHtml}
         ${product.accords.length > 0 ? `
           <div class="info-card section-accords">
             <div class="info-card-title">${t('main_accords')}</div>
@@ -855,6 +875,9 @@ function onLanguageChanged() {
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize i18n first
     initI18n();
+
+    // Initialize Cart
+    initCart();
 
     loadProducts();
 
@@ -978,4 +1001,210 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(heroCta);
     }
 });
+
+// ============================================
+// CART LOGIC & CHECKOUT
+// ============================================
+let cart = [];
+const DELIVERY_FEE = 30;
+
+function initCart() {
+    const saved = localStorage.getItem('olfato_cart');
+    if (saved) {
+        try {
+            cart = JSON.parse(saved);
+        } catch(e) {
+            cart = [];
+        }
+    }
+    updateCartUI();
+    
+    // Bind UI Buttons
+    document.getElementById('cart-header-btn').addEventListener('click', openCartSidebar);
+    document.getElementById('cart-close-btn').addEventListener('click', closeCartSidebar);
+    document.getElementById('cart-overlay').addEventListener('click', closeCartSidebar);
+    
+    document.getElementById('checkout-start-btn').addEventListener('click', () => {
+        document.getElementById('cart-list-view').classList.add('hidden');
+        document.getElementById('cart-form-view').classList.remove('hidden');
+    });
+    
+    document.getElementById('back-to-cart-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('cart-form-view').classList.add('hidden');
+        document.getElementById('cart-list-view').classList.remove('hidden');
+    });
+    
+    document.getElementById('checkout-form').addEventListener('submit', handleCheckout);
+}
+
+function saveCart() {
+    localStorage.setItem('olfato_cart', JSON.stringify(cart));
+    updateCartUI();
+}
+
+function updateCartUI() {
+    const badge = document.getElementById('cart-badge');
+    const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+    
+    if (totalItems > 0) {
+        badge.textContent = totalItems;
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
+    }
+    
+    renderCartList();
+}
+
+// Handler specifically for the modal's Add to Cart button
+function addFromModal(sku, name, image) {
+    const targetSize = document.querySelector(`input[name="size_${sku}"]:checked`).value;
+    const price = targetSize === '50' ? 79 : 49;
+    addToCart(sku, name, image, parseInt(targetSize), price);
+    closeProductModal();
+    setTimeout(openCartSidebar, 300); // Opens cart smoothly after modal closes
+}
+
+function addToCart(sku, name, image, size, price) {
+    // Check if item of same sku and size exists
+    const existing = cart.find(i => i.sku === sku && i.size === size);
+    if (existing) {
+        existing.qty += 1;
+    } else {
+        cart.push({ sku, name, image, size, price, qty: 1 });
+    }
+    saveCart();
+    // Vibrate/Flash badge to give feedback if the cart sidebar isn't opened
+    const badge = document.getElementById('cart-badge');
+    badge.style.transform = 'scale(1.5)';
+    setTimeout(() => badge.style.transform = 'scale(1)', 200);
+}
+
+function updateQuantity(idx, act) {
+    if (cart[idx]) {
+        if (act === 'inc') cart[idx].qty++;
+        else if (act === 'dec') cart[idx].qty--;
+        
+        if (cart[idx].qty <= 0) {
+            cart.splice(idx, 1);
+        }
+    }
+    saveCart();
+}
+
+function removeFromCart(idx) {
+    if (cart[idx]) {
+        cart.splice(idx, 1);
+    }
+    saveCart();
+}
+
+function renderCartList() {
+    const listEl = document.getElementById('cart-items');
+    const subtotalEl = document.getElementById('cart-subtotal');
+    const totalEl = document.getElementById('cart-total');
+    const checkoutBtn = document.getElementById('checkout-start-btn');
+    
+    listEl.innerHTML = '';
+    
+    if (cart.length === 0) {
+        listEl.innerHTML = `<div class="empty-cart-msg">${t('empty_cart')}</div>`;
+        subtotalEl.innerText = '0 MAD';
+        totalEl.innerText = '0 MAD';
+        checkoutBtn.disabled = true;
+        return;
+    }
+    
+    checkoutBtn.disabled = false;
+    let subtotal = 0;
+    
+    cart.forEach((item, idx) => {
+        subtotal += item.price * item.qty;
+        
+        const itemEl = document.createElement('div');
+        itemEl.className = 'cart-item';
+        itemEl.innerHTML = `
+            <img src="${item.image}" alt="${item.name}" class="cart-item-img" onerror="this.style.display='none'">
+            <div class="cart-item-info">
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-size-price">${item.size} ml — <span class="cart-price">${item.price} MAD</span></div>
+                <div class="cart-item-actions">
+                    <button class="qty-btn" onclick="updateQuantity(${idx}, 'dec')">-</button>
+                    <span class="qty-val">${item.qty}</span>
+                    <button class="qty-btn" onclick="updateQuantity(${idx}, 'inc')">+</button>
+                    <button class="rm-cart-item" onclick="removeFromCart(${idx})" aria-label="Supprimer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
+                </div>
+            </div>
+        `;
+        listEl.appendChild(itemEl);
+    });
+    
+    subtotalEl.innerText = `${subtotal} MAD`;
+    totalEl.innerText = `${subtotal + DELIVERY_FEE} MAD`;
+}
+
+function openCartSidebar() {
+    document.getElementById('cart-list-view').classList.remove('hidden');
+    document.getElementById('cart-form-view').classList.add('hidden');
+    document.getElementById('cart-sidebar').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeCartSidebar() {
+    document.getElementById('cart-sidebar').classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+function handleCheckout(e) {
+    e.preventDefault();
+    if (cart.length === 0) return;
+    
+    const name = document.getElementById('order-name').value;
+    const phone = document.getElementById('order-phone').value;
+    const city = document.getElementById('order-city').value;
+    const address = document.getElementById('order-address').value;
+    
+    let itemsText = '';
+    let subtotal = 0;
+    
+    cart.forEach(item => {
+        itemsText += `- ${item.qty} x 🌸 ${item.name} (${item.size} ml) [Ref: ${item.sku}]\n`;
+        subtotal += (item.qty * item.price);
+    });
+    
+    const total = subtotal + DELIVERY_FEE;
+    
+    const message = `Bonjour, je souhaite passer une commande :
+
+📦 *DÉTAILS DE LA COMMANDE*
+${itemsText}
+Sous-total : ${subtotal} MAD
+Livraison : ${DELIVERY_FEE} MAD
+*Total à payer : ${total} MAD*
+
+👤 *INFORMATIONS CLIENT*
+Nom: ${name}
+Téléphone: ${phone}
+Ville: ${city}
+Adresse: ${address}
+
+Merci de confirmer l'expédition de ma commande.`;
+
+    const waUrl = `https://wa.me/212777885769?text=${encodeURIComponent(message)}`;
+    
+    // Clear cart
+    cart = [];
+    saveCart();
+    closeCartSidebar();
+    
+    // Reset Form
+    document.getElementById('checkout-form').reset();
+    
+    // Go to WA
+    window.open(waUrl, '_blank');
+}
+
 

@@ -4,6 +4,23 @@
    ============================================ */
 
 let currentLang = localStorage.getItem('olfato_lang') || 'fr';
+const MOJIBAKE_MARKERS_RE = /[ÃÂâÅØÙð]/g;
+const MOJIBAKE_MARKER_TEST_RE = /[ÃÂâÅØÙð]/;
+
+function maybeFixMojibake(value) {
+    if (typeof value !== 'string') return value;
+    if (!MOJIBAKE_MARKER_TEST_RE.test(value)) return value;
+
+    try {
+        const inputMarkerCount = (value.match(MOJIBAKE_MARKERS_RE) || []).length;
+        const bytes = Uint8Array.from(value, ch => ch.charCodeAt(0) & 0xff);
+        const decoded = new TextDecoder('utf-8').decode(bytes);
+        const outputMarkerCount = (decoded.match(MOJIBAKE_MARKERS_RE) || []).length;
+        return outputMarkerCount < inputMarkerCount ? decoded : value;
+    } catch {
+        return value;
+    }
+}
 
 // ============================================
 // TRANSLATIONS DICTIONARY
@@ -418,7 +435,7 @@ function t(key, params = {}) {
     for (const [k, v] of Object.entries(params)) {
         text = text.replace(`{${k}}`, v);
     }
-    return text;
+    return maybeFixMojibake(text);
 }
 
 /**
@@ -428,7 +445,8 @@ function tAccord(labelEn) {
     const lang = currentLang;
     const accords = TRANSLATIONS[lang]?.accords ?? TRANSLATIONS['fr']?.accords ?? {};
     const key = labelEn.toLowerCase();
-    return accords[key] || labelEn.charAt(0).toUpperCase() + labelEn.slice(1);
+    const translated = accords[key] || labelEn.charAt(0).toUpperCase() + labelEn.slice(1);
+    return maybeFixMojibake(translated);
 }
 
 /**

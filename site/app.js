@@ -7,8 +7,91 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
 const NOTES_IMG_PATH = `${SUPABASE_URL}/storage/v1/object/public/notes/`;
+const DEFAULT_NOTE_IMAGE_NAME = 'Floral Notes';
 const PRODUCTS_PER_PAGE = 30;
 const SHOW_PRODUCT_DESCRIPTION = false;
+const NOTE_IMAGE_ALIAS_RAW = {
+    'African Freesia Petals': 'Freesia',
+    'African Ginger': 'Ginger',
+    'African Orange Flower': 'Orange Blossom',
+    'Agarwood': 'Agarwood (Oud)',
+    'Almond Milk': 'Soy Milk',
+    'Amalfi Lemon': 'Lemon',
+    'Amalfi Lemon Lavender': 'Lemon',
+    'Amaryllis': 'Amarillys',
+    'Ambermax': 'Amber',
+    'Ambrette': 'Ambrette (Musk Mallow)',
+    'Ambrofix': 'Ambroxan',
+    'Animal notes': 'Animal Notes',
+    'Atlas Cedar': 'Himalayan Cedar',
+    'Australian Sandalwood': 'Sandalwood',
+    'Balsam Fir': 'Fir',
+    'Bergamot Leaf': 'Rind Bergamot',
+    'Big Strawberry': 'Strawberry',
+    'Birch Leaf': 'Birch',
+    'Bitter Almond': 'Almond',
+    'Black Amber': 'Amber',
+    'Black Cardamom': 'Cardamom',
+    'Black locust': 'Black Locust',
+    'Black Orchid': 'Orchid Black Diamond',
+    'Black Pepper': 'Pepper',
+    'Black Rose': 'Rose',
+    'Black Vanilla Husk': 'Vanilla',
+    'Black Violet': 'Violet',
+    'Blackcurrant': 'Black Currant',
+    'Blood Grapefruit': 'Grapefruit',
+    'Blood Mandarin': 'Red Mandarin',
+    'Blue Hyacinth': 'Hyacinth',
+    'Blue Lotus': 'Lotus',
+    'Bourbon Geranium': 'Geranium',
+    'Bourbon Pepper': 'Pepper',
+    'Bourbon Vanilla': 'Vanilla',
+    'Brazilian Orange': 'Orange',
+    'Brown sugar': 'Brown Sugar',
+    'Bulgarian Rose': 'Rosa Alba',
+    'Cacao': 'Cacao Pod',
+    'Cactus Flower': 'Cactus Blossom',
+    'Calabrian bergamot': 'Bergamot',
+    'Californian Gardenia': 'Gardenia',
+    'Candied Almond': 'Caramelized Almond',
+    'cannabis': 'Cannabis',
+    'Casablanca Lily': 'Lily',
+    'Cashmere Musk': 'Musk',
+    'Cashmere Wood': 'Cashmir wood',
+    'Cashmirwood': 'Cashmir wood',
+    'Cassis': 'Black Currant',
+    'Cedarwood': 'Cedar',
+    'Ceylon Cinnamon': 'Cinnamon',
+    'Chili Pepper': 'Serrano Pepper',
+    'Chinese Black Tea': 'Keemun Tea',
+    'Chinese Jasmine': 'Jasmine',
+    'Chocolate': 'Dark Chocolate',
+    'Coconut Milk': 'Milk',
+    'Creme Brulee': 'Custard',
+    'Damask Rose': 'Rose',
+    'Dark woodsy notes': 'Woody Notes',
+    'Dulce de leche': 'Dulce de Leche',
+    'Egyptian Jasmine': 'Jasmine',
+    'elemi': 'Elemi',
+    'Elemi resin': 'Elemi',
+    'Exotic floral notes': 'Floral Notes',
+    'Exotic Woods': 'Woody Notes',
+    'Fir Resin': 'Resins',
+    'Flowers': 'Floral Notes',
+    'Frankincense': 'Olibanum (Frankincense)',
+    'French labdanum': 'Labdanum',
+    'French Narcissus': 'Narcissus',
+    'Fruits': 'Fruity Notes',
+    'Fruity and Spicy Notes': 'Fruity Notes',
+    'Gaiac Wood': 'Guaiac Wood',
+    'Ginger flower': 'White Ginger Lily',
+    'Granny Smith apple': 'Green Apple',
+    'Grasse Rose': 'Rose',
+    'Green Accord': 'Green Notes',
+    'Green Apple': 'Apple',
+    'Green Leaves': 'Cedar Leaves',
+    'Green Mandarin': 'Green Tangerine'
+};
 
 let STORE_SETTINGS = {
     whatsapp_number: '212777885769',
@@ -45,6 +128,26 @@ function normalizePeriodKey(value) {
         .toLowerCase()
         .trim();
 }
+
+function normalizeNoteKey(value) {
+    return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim()
+        .replace(/\s+/g, ' ');
+}
+
+function toTitleCaseNoteName(value) {
+    return String(value || '')
+        .toLowerCase()
+        .replace(/\b([a-z])/g, (match) => match.toUpperCase());
+}
+
+const NOTE_IMAGE_ALIASES = Object.fromEntries(
+    Object.entries(NOTE_IMAGE_ALIAS_RAW).map(([from, to]) => [normalizeNoteKey(from), to])
+);
 
 // ============================================
 // DATA LOADING
@@ -701,8 +804,19 @@ function closeProductModal(fromHistory = false) {
 }
 
 function getNoteImage(noteName) {
-    const cleanName = noteName.trim();
-    return `${NOTES_IMG_PATH}${cleanName}.jpg`;
+    const cleanName = String(noteName || '').trim();
+    const aliasName = NOTE_IMAGE_ALIASES[normalizeNoteKey(cleanName)];
+    const resolvedName = aliasName || toTitleCaseNoteName(cleanName);
+    return `${NOTES_IMG_PATH}${encodeURIComponent(`${resolvedName}.jpg`)}`;
+}
+
+function handleNoteImageError(imgElement) {
+    if (imgElement.dataset.fallbackApplied === '1') {
+        imgElement.style.display = 'none';
+        return;
+    }
+    imgElement.dataset.fallbackApplied = '1';
+    imgElement.src = `${NOTES_IMG_PATH}${encodeURIComponent(`${DEFAULT_NOTE_IMAGE_NAME}.jpg`)}`;
 }
 
 function getSeasonIcon(seasonKey) {
@@ -819,7 +933,7 @@ function buildProductPage(product) {
                 const chips = notesEn.map((n, i) => {
                     const imgSrc = getNoteImage(n);
                     const displayName = notesDisplay[i] || n;
-                    return `<span class="note-chip"><img src="${imgSrc}" alt="${n}" onerror="this.style.display='none'">${displayName}</span>`;
+                    return `<span class="note-chip"><img src="${imgSrc}" alt="${n}" onerror="handleNoteImageError(this)">${displayName}</span>`;
                 }).join('');
                 return `
           <div class="pyramid-level">

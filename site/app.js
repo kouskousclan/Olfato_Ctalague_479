@@ -707,12 +707,12 @@ function getNoteImage(noteName) {
 
 function getSeasonIcon(seasonKey) {
     const icons = {
-        'winter': 'â„ï¸',
-        'spring': 'ðŸŒ¸',
-        'summer': 'â˜€ï¸',
-        'autumn': 'ðŸ‚'
+        'winter': '&#x2744;&#xFE0F;',
+        'spring': '&#x1F338;',
+        'summer': '&#x2600;&#xFE0F;',
+        'autumn': '&#x1F342;'
     };
-    return icons[seasonKey] || 'ðŸŒ¿';
+    return icons[seasonKey] || '&#x1F33F;';
 }
 
 function buildProductPage(product) {
@@ -744,8 +744,8 @@ function buildProductPage(product) {
       <div class="info-card section-daytime">
         <div class="info-card-title">${t('daytime_title')}</div>
         <div class="daytime-bar">
-          <div class="daytime-day" style="width:${dayW}%">â˜€ï¸ ${t('day')}</div>
-          <div class="daytime-night" style="width:${nightW}%">ðŸŒ™ ${t('night')}</div>
+          <div class="daytime-day" style="width:${dayW}%">&#x2600;&#xFE0F; ${t('day')}</div>
+          <div class="daytime-night" style="width:${nightW}%">&#x1F319; ${t('night')}</div>
         </div>
       </div>
     `;
@@ -754,26 +754,33 @@ function buildProductPage(product) {
     // Seasons
     let seasonsHtml = '';
     if (product.seasons && Object.keys(product.seasons).length > 0) {
-        // Map original French keys to season keys
+        // Normalize keys to avoid accent/encoding issues (e.g. "Été", "Ete", "Ã‰tÃ©")
+        const normalizedSeasons = Object.fromEntries(
+            Object.entries(product.seasons).map(([k, v]) => [normalizePeriodKey(k), v])
+        );
+
         const seasonMap = [
-            { dataKey: 'Hiver', key: 'winter' },
-            { dataKey: 'Printemps', key: 'spring' },
-            { dataKey: 'Ã‰tÃ©', key: 'summer' },
-            { dataKey: 'Automne', key: 'autumn' }
+            { lookup: ['winter', 'hiver'], key: 'winter' },
+            { lookup: ['spring', 'printemps'], key: 'spring' },
+            { lookup: ['summer', 'ete'], key: 'summer' },
+            { lookup: ['autumn', 'fall', 'automne'], key: 'autumn' }
         ];
 
         const seasonItems = seasonMap
-            .filter(s => product.seasons[s.dataKey] !== undefined)
             .map(s => {
-                const pct = product.seasons[s.dataKey];
-                const opacity = Math.max(0.3, pct / 100);
+                const matchedKey = s.lookup.find(label => normalizedSeasons[label] !== undefined);
+                if (!matchedKey) return null;
+                const value = Number(normalizedSeasons[matchedKey]) || 0;
+                const opacity = Math.max(0.3, value / 100);
                 return `
           <div class="season-item" data-season="${s.key}" style="opacity:${opacity}">
             <span class="season-icon">${getSeasonIcon(s.key)}</span>
             <span class="season-label">${t(s.key)}</span>
           </div>
         `;
-            }).join('');
+            })
+            .filter(Boolean)
+            .join('');
 
         seasonsHtml = `
       <div class="info-card section-seasons">

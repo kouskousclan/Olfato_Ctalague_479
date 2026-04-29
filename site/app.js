@@ -1,5 +1,5 @@
 ﻿/* ============================================
-   L'ARTISTE PARFUM â€” Catalogue App (i18n)
+   L'ARTISTE PARFUM - Catalogue App (i18n)
    ============================================ */
 
 const SUPABASE_URL = 'https://mkomrppcdrgbpfybrfyu.supabase.co';
@@ -116,7 +116,7 @@ async function loadProducts() {
                 waFloat.href = `https://wa.me/${STORE_SETTINGS.whatsapp_number}?text=${text}`;
             }
             // Update title
-            document.title = `${STORE_SETTINGS.store_name} â€” Catalogue de Parfums`;
+            document.title = `${STORE_SETTINGS.store_name} - Catalogue de Parfums`;
         }
 
         const { data: dbProducts, error } = await supabaseClient
@@ -180,7 +180,7 @@ async function loadProducts() {
                 pyramid_ar: {}
             };
             
-            // Reconstruct Periods (Seasons & Day/Night) â€” tolÃ¨re clÃ©s EN et FR
+            // Reconstruct Periods (Seasons & Day/Night) - supports EN and FR keys
             const seasonReverseMap = {
                 winter: 'Hiver',
                 spring: 'Printemps',
@@ -210,7 +210,7 @@ async function loadProducts() {
             });
             
             // Reconstruct Pyramids with all 3 languages
-            const pyramidReverseMap = { 'top': 'Notes de tÃªte', 'middle': 'Notes de cÅ“ur', 'base': 'Notes de fond' };
+            const pyramidReverseMap = { 'top': 'Notes de t\u00EAte', 'middle': 'Notes de c\u0153ur', 'base': 'Notes de fond' };
             notesData.forEach(n => {
                 const frKey = pyramidReverseMap[n.level];
                 const noteObj = n.notes;
@@ -330,7 +330,7 @@ function createProductCard(product, index) {
     const card = document.createElement('button');
     card.className = 'product-card';
     card.type = 'button';
-    card.setAttribute('aria-label', `Voir ${product.nom} â€” ${product.inspiration}`);
+    card.setAttribute('aria-label', `Voir ${product.nom} - ${product.inspiration}`);
     card.style.animationDelay = `${(index % PRODUCTS_PER_PAGE) * 0.04}s`;
     card.onclick = () => openProductModal(product);
 
@@ -344,7 +344,7 @@ function createProductCard(product, index) {
 
     card.innerHTML = `
     <div class="product-card-img">
-      <img src="${product.image}" alt="${product.nom} â€” Parfum ${product.genre} au Maroc | L'artiste Parfum" loading="lazy" decoding="async" onerror="this.style.display='none'">
+      <img src="${product.image}" alt="${product.nom} - Parfum ${product.genre} au Maroc | L'artiste Parfum" loading="lazy" decoding="async" onerror="this.style.display='none'">
       <span class="product-card-genre" data-genre="${product.genre}">${tGenre(product.genre)}</span>
       <button class="card-add-cart-btn" aria-label="${t('add_to_cart')}" onclick="event.stopPropagation(); addToCart('${product.sku}', '${product.nom.replace(/'/g, "\\'")}', '${product.image}', 50, 79);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 5v14M5 12h14"></path></svg>
@@ -613,7 +613,7 @@ function openProductModal(product) {
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
         // Fallback sequentially in case descriptions are empty depending on language config
-        let desc = product.description_fr || product.description_en || product.description_ar || "DÃ©couvrez ce parfum exclusif par L'artiste Parfum.";
+        let desc = product.description_fr || product.description_en || product.description_ar || "D\u00E9couvrez ce parfum exclusif par L'artiste Parfum.";
         // Truncate cleanly around 155 chars for SEO perfection
         if (desc.length > 155) {
             desc = desc.substring(0, 155) + '...';
@@ -639,7 +639,7 @@ function openProductModal(product) {
         "@context": "https://schema.org",
         "@type": "Product",
         "name": product.nom,
-        "description": product.description_fr || product.description_en || `Parfum ${product.genre} â€” ${accords}`,
+        "description": product.description_fr || product.description_en || `Parfum ${product.genre} - ${accords}`,
         "image": product.image,
         "brand": {
             "@type": "Brand",
@@ -684,12 +684,12 @@ function closeProductModal(fromHistory = false) {
     }
 
     // --- Restore Default SEO ---
-    document.title = "L'artiste Parfum â€” Catalogue de Parfums";
-    const defaultDesc = "L'artiste Parfum - The Art of Perfume. DÃ©couvrez notre collection exclusive de parfums pour homme, femme et unisex.";
+    document.title = "L'artiste Parfum - Catalogue de Parfums";
+    const defaultDesc = "L'artiste Parfum - The Art of Perfume. D\u00E9couvrez notre collection exclusive de parfums pour homme, femme et unisex.";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) metaDesc.setAttribute('content', defaultDesc);
     const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) ogTitle.setAttribute('content', "L'artiste Parfum â€” Catalogue de Parfums");
+    if (ogTitle) ogTitle.setAttribute('content', "L'artiste Parfum - Catalogue de Parfums");
     const ogDesc = document.querySelector('meta[property="og:description"]');
     if (ogDesc) ogDesc.setAttribute('content', defaultDesc);
     // ---------------------------
@@ -754,7 +754,7 @@ function buildProductPage(product) {
     // Seasons
     let seasonsHtml = '';
     if (product.seasons && Object.keys(product.seasons).length > 0) {
-        // Normalize keys to avoid accent/encoding issues (e.g. "Été", "Ete", "Ã‰tÃ©")
+        // Normalize keys to avoid accent/encoding issues (e.g. "Été", "Ete")
         const normalizedSeasons = Object.fromEntries(
             Object.entries(product.seasons).map(([k, v]) => [normalizePeriodKey(k), v])
         );
@@ -795,9 +795,9 @@ function buildProductPage(product) {
     if (product.pyramid && Object.keys(product.pyramid).length > 0) {
         // Map original French keys to translation keys
         const levels = [
-            { dataKey: 'Notes de tÃªte', key: 'top_notes', icon: 'ðŸŽµ' },
-            { dataKey: 'Notes de cÅ“ur', key: 'heart_notes', icon: 'â¤ï¸' },
-            { dataKey: 'Notes de fond', key: 'base_notes', icon: 'ðŸŒ³' }
+            { dataKey: 'Notes de t\u00EAte', key: 'top_notes', icon: '&#x1F3B5;' },
+            { dataKey: 'Notes de c\u0153ur', key: 'heart_notes', icon: '&#x2764;&#xFE0F;' },
+            { dataKey: 'Notes de fond', key: 'base_notes', icon: '&#x1F333;' }
         ];
 
         // Select the right pyramid based on current language
@@ -1080,7 +1080,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('languageChanged', onLanguageChanged);
 
     // ============================================
-    // FLOATING WHATSAPP â€” Show only when hero CTA is out of view
+    // FLOATING WHATSAPP - Show only when hero CTA is out of view
     // ============================================
     const waFloat = document.getElementById('whatsapp-float');
     const heroCta = document.querySelector('.hero-whatsapp-cta');
@@ -1089,7 +1089,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach(entry => {
-                    // Hero CTA visible â†’ hide float. Hero CTA gone â†’ show float.
+                    // Hero CTA visible -> hide float. Hero CTA gone -> show float.
                     if (entry.isIntersecting) {
                         waFloat.classList.remove('visible');
                     } else {
@@ -1229,7 +1229,7 @@ function renderCartList() {
             <img src="${item.image}" alt="${item.name}" class="cart-item-img" onerror="this.style.display='none'">
             <div class="cart-item-info">
                 <div class="cart-item-name">${item.name}</div>
-                <div class="cart-item-size-price">${item.size} ml â€” <span class="cart-price">${item.price} MAD</span></div>
+                <div class="cart-item-size-price">${item.size} ml - <span class="cart-price">${item.price} MAD</span></div>
                 <div class="cart-item-actions">
                     <button class="qty-btn" onclick="updateQuantity(${idx}, 'dec')">-</button>
                     <span class="qty-val">${item.qty}</span>
@@ -1272,7 +1272,7 @@ async function handleCheckout(e) {
     let subtotal = 0;
     
     cart.forEach(item => {
-        itemsText += `- ${item.qty} x ðŸŒ¸ ${item.name} (${item.size} ml) [Ref: ${item.sku}]\n`;
+        itemsText += `- ${item.qty} x \u{1F338} ${item.name} (${item.size} ml) [Ref: ${item.sku}]\n`;
         subtotal += (item.qty * item.price);
     });
     
@@ -1283,7 +1283,7 @@ async function handleCheckout(e) {
         const btn = e.target.querySelector('button[type="submit"]');
         if (btn) {
             btn.disabled = true;
-            btn.textContent = 'CrÃ©ation de la commande...';
+            btn.textContent = 'Cr\u00E9ation de la commande...';
         }
 
         const orderData = {
@@ -1304,19 +1304,19 @@ async function handleCheckout(e) {
 
     const message = `Bonjour, je souhaite passer une commande :
 
-ðŸ“¦ *DÃ‰TAILS DE LA COMMANDE*
+\u{1F4E6} *D\u00C9TAILS DE LA COMMANDE*
 ${itemsText}
 Sous-total : ${subtotal} MAD
 Livraison : ${DELIVERY_FEE} MAD
-*Total Ã  payer : ${total} MAD*
+*Total \u00E0 payer : ${total} MAD*
 
-ðŸ‘¤ *INFORMATIONS CLIENT*
+\u{1F464} *INFORMATIONS CLIENT*
 Nom: ${name}
-TÃ©lÃ©phone: ${phone}
+T\u00E9l\u00E9phone: ${phone}
 Ville: ${city}
 Adresse: ${address}
 
-Merci de confirmer l'expÃ©dition de ma commande.`;
+Merci de confirmer l'exp\u00E9dition de ma commande.`;
 
     const waUrl = `https://wa.me/${STORE_SETTINGS.whatsapp_number}?text=${encodeURIComponent(message)}`;
     

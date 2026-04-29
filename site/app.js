@@ -1,13 +1,20 @@
-/* ============================================
-   L'ARTISTE PARFUM — Catalogue App (i18n)
+﻿/* ============================================
+   L'ARTISTE PARFUM â€” Catalogue App (i18n)
    ============================================ */
 
 const SUPABASE_URL = 'https://mkomrppcdrgbpfybrfyu.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rb21ycHBjZHJnYnBmeWJyZnl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxODQ2MzUsImV4cCI6MjA4ODc2MDYzNX0.DXJvMb2eX7Cg_FvKW-NyodaDCsLREfY_V4H5Q-IsBaI';
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
 const NOTES_IMG_PATH = `${SUPABASE_URL}/storage/v1/object/public/notes/`;
 const PRODUCTS_PER_PAGE = 30;
+const SHOW_PRODUCT_DESCRIPTION = false;
+
+let STORE_SETTINGS = {
+    whatsapp_number: '212777885769',
+    currency: 'MAD',
+    store_name: "L'artiste Parfum"
+};
 
 let allProducts = [];
 let filteredProducts = [];
@@ -31,9 +38,62 @@ function shuffleArray(array) {
     return array;
 }
 
+function normalizePeriodKey(value) {
+    return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
+}
+
 // ============================================
 // DATA LOADING
 // ============================================
+function applyStoreSettings(settingsData) {
+    if (!settingsData) return;
+    if (Array.isArray(settingsData)) {
+        settingsData.forEach(s => { STORE_SETTINGS[s.key] = s.value; });
+    } else {
+        Object.assign(STORE_SETTINGS, settingsData);
+    }
+
+    const waFloat = document.getElementById('whatsapp-float');
+    if (waFloat) {
+        const text = encodeURIComponent(`Bonjour, je souhaite commander un parfum ${STORE_SETTINGS.store_name}`);
+        waFloat.href = `https://wa.me/${STORE_SETTINGS.whatsapp_number}?text=${text}`;
+    }
+    document.title = `${STORE_SETTINGS.store_name} - Catalogue de Parfums`;
+}
+
+function isLocalDbDevHost() {
+    return ['localhost', '127.0.0.1', ''].includes(window.location.hostname);
+}
+
+async function loadProductsFromLocalDbIfAvailable() {
+    if (!isLocalDbDevHost()) return false;
+
+    try {
+        const response = await fetch('/api/products', { cache: 'no-store' });
+        if (!response.ok) return false;
+
+        const payload = await response.json();
+        if (!payload || !Array.isArray(payload.products)) return false;
+
+        applyStoreSettings(payload.settings);
+        allProducts = payload.products;
+        shuffleArray(allProducts);
+
+        filteredProducts = [...allProducts];
+        updateCatalog();
+        updateProductCount();
+        console.info(`Loaded ${allProducts.length} products from local SQLite database.`);
+        return true;
+    } catch (error) {
+        console.info('Local SQLite API unavailable; falling back to Supabase.', error);
+        return false;
+    }
+}
+
 /**
  * Fetch all products from Supabase, transform the relational data
  * into the flat structure expected by the UI, then render the catalog.
@@ -41,6 +101,24 @@ function shuffleArray(array) {
  */
 async function loadProducts() {
     try {
+        if (await loadProductsFromLocalDbIfAvailable()) return;
+        if (!supabaseClient) throw new Error('Supabase client unavailable and local SQLite API not available.');
+
+        // Load store settings first
+        const { data: settingsData } = await supabaseClient.from('store_settings').select('*');
+        if (settingsData) {
+            settingsData.forEach(s => { STORE_SETTINGS[s.key] = s.value; });
+            
+            // Update WA Float
+            const waFloat = document.getElementById('whatsapp-float');
+            if (waFloat) {
+                const text = encodeURIComponent(`Bonjour, je souhaite commander un parfum ${STORE_SETTINGS.store_name}`);
+                waFloat.href = `https://wa.me/${STORE_SETTINGS.whatsapp_number}?text=${text}`;
+            }
+            // Update title
+            document.title = `${STORE_SETTINGS.store_name} â€” Catalogue de Parfums`;
+        }
+
         const { data: dbProducts, error } = await supabaseClient
             .from('products')
             .select(`
@@ -102,21 +180,37 @@ async function loadProducts() {
                 pyramid_ar: {}
             };
             
-            // Reconstruct Periods (Seasons & Day/Night)
-            const seasonReverseMap = { 'winter': 'Hiver', 'spring': 'Printemps', 'summer': 'Été', 'fall': 'Automne' };
-            const dayReverseMap = { 'day': 'Jour', 'night': 'Nuit' };
-            
+            // Reconstruct Periods (Seasons & Day/Night) â€” tolÃ¨re clÃ©s EN et FR
+            const seasonReverseMap = {
+                winter: 'Hiver',
+                spring: 'Printemps',
+                summer: 'Été',
+                fall: 'Automne',
+                hiver: 'Hiver',
+                printemps: 'Printemps',
+                ete: 'Été',
+                automne: 'Automne'
+            };
+            const dayReverseMap = {
+                day: 'Jour',
+                night: 'Nuit',
+                jour: 'Jour',
+                nuit: 'Nuit'
+            };
+
             (p.product_wear_times || []).forEach(w => {
                 const perObj = w.periods;
                 if (!perObj) return;
-                
-                const periodEn = perObj.period_en;
-                if (seasonReverseMap[periodEn]) pObj.seasons[seasonReverseMap[periodEn]] = w.percentage;
-                if (dayReverseMap[periodEn]) pObj.daytime[dayReverseMap[periodEn]] = w.percentage;
+                const pct = Number(w.percentage) || 0;
+                [perObj.period_en, perObj.period_fr].forEach(rawKey => {
+                    const key = normalizePeriodKey(rawKey);
+                    if (seasonReverseMap[key]) pObj.seasons[seasonReverseMap[key]] = pct;
+                    if (dayReverseMap[key]) pObj.daytime[dayReverseMap[key]] = pct;
+                });
             });
             
             // Reconstruct Pyramids with all 3 languages
-            const pyramidReverseMap = { 'top': 'Notes de tête', 'middle': 'Notes de cœur', 'base': 'Notes de fond' };
+            const pyramidReverseMap = { 'top': 'Notes de tÃªte', 'middle': 'Notes de cÅ“ur', 'base': 'Notes de fond' };
             notesData.forEach(n => {
                 const frKey = pyramidReverseMap[n.level];
                 const noteObj = n.notes;
@@ -236,7 +330,7 @@ function createProductCard(product, index) {
     const card = document.createElement('button');
     card.className = 'product-card';
     card.type = 'button';
-    card.setAttribute('aria-label', `Voir ${product.nom} — ${product.inspiration}`);
+    card.setAttribute('aria-label', `Voir ${product.nom} â€” ${product.inspiration}`);
     card.style.animationDelay = `${(index % PRODUCTS_PER_PAGE) * 0.04}s`;
     card.onclick = () => openProductModal(product);
 
@@ -250,7 +344,7 @@ function createProductCard(product, index) {
 
     card.innerHTML = `
     <div class="product-card-img">
-      <img src="${product.image}" alt="${product.nom} — Parfum ${product.genre} au Maroc | L'artiste Parfum" loading="lazy" decoding="async" onerror="this.style.display='none'">
+      <img src="${product.image}" alt="${product.nom} â€” Parfum ${product.genre} au Maroc | L'artiste Parfum" loading="lazy" decoding="async" onerror="this.style.display='none'">
       <span class="product-card-genre" data-genre="${product.genre}">${tGenre(product.genre)}</span>
       <button class="card-add-cart-btn" aria-label="${t('add_to_cart')}" onclick="event.stopPropagation(); addToCart('${product.sku}', '${product.nom.replace(/'/g, "\\'")}', '${product.image}', 50, 79);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 5v14M5 12h14"></path></svg>
@@ -519,7 +613,7 @@ function openProductModal(product) {
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
         // Fallback sequentially in case descriptions are empty depending on language config
-        let desc = product.description_fr || product.description_en || product.description_ar || "Découvrez ce parfum exclusif par L'artiste Parfum.";
+        let desc = product.description_fr || product.description_en || product.description_ar || "DÃ©couvrez ce parfum exclusif par L'artiste Parfum.";
         // Truncate cleanly around 155 chars for SEO perfection
         if (desc.length > 155) {
             desc = desc.substring(0, 155) + '...';
@@ -545,7 +639,7 @@ function openProductModal(product) {
         "@context": "https://schema.org",
         "@type": "Product",
         "name": product.nom,
-        "description": product.description_fr || product.description_en || `Parfum ${product.genre} — ${accords}`,
+        "description": product.description_fr || product.description_en || `Parfum ${product.genre} â€” ${accords}`,
         "image": product.image,
         "brand": {
             "@type": "Brand",
@@ -590,12 +684,12 @@ function closeProductModal(fromHistory = false) {
     }
 
     // --- Restore Default SEO ---
-    document.title = "L'artiste Parfum — Catalogue de Parfums";
-    const defaultDesc = "L'artiste Parfum - The Art of Perfume. Découvrez notre collection exclusive de parfums pour homme, femme et unisex.";
+    document.title = "L'artiste Parfum â€” Catalogue de Parfums";
+    const defaultDesc = "L'artiste Parfum - The Art of Perfume. DÃ©couvrez notre collection exclusive de parfums pour homme, femme et unisex.";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) metaDesc.setAttribute('content', defaultDesc);
     const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) ogTitle.setAttribute('content', "L'artiste Parfum — Catalogue de Parfums");
+    if (ogTitle) ogTitle.setAttribute('content', "L'artiste Parfum â€” Catalogue de Parfums");
     const ogDesc = document.querySelector('meta[property="og:description"]');
     if (ogDesc) ogDesc.setAttribute('content', defaultDesc);
     // ---------------------------
@@ -613,12 +707,12 @@ function getNoteImage(noteName) {
 
 function getSeasonIcon(seasonKey) {
     const icons = {
-        'winter': '❄️',
-        'spring': '🌸',
-        'summer': '☀️',
-        'autumn': '🍂'
+        'winter': 'â„ï¸',
+        'spring': 'ðŸŒ¸',
+        'summer': 'â˜€ï¸',
+        'autumn': 'ðŸ‚'
     };
-    return icons[seasonKey] || '🌿';
+    return icons[seasonKey] || 'ðŸŒ¿';
 }
 
 function buildProductPage(product) {
@@ -650,8 +744,8 @@ function buildProductPage(product) {
       <div class="info-card section-daytime">
         <div class="info-card-title">${t('daytime_title')}</div>
         <div class="daytime-bar">
-          <div class="daytime-day" style="width:${dayW}%">☀️ ${t('day')}</div>
-          <div class="daytime-night" style="width:${nightW}%">🌙 ${t('night')}</div>
+          <div class="daytime-day" style="width:${dayW}%">â˜€ï¸ ${t('day')}</div>
+          <div class="daytime-night" style="width:${nightW}%">ðŸŒ™ ${t('night')}</div>
         </div>
       </div>
     `;
@@ -664,7 +758,7 @@ function buildProductPage(product) {
         const seasonMap = [
             { dataKey: 'Hiver', key: 'winter' },
             { dataKey: 'Printemps', key: 'spring' },
-            { dataKey: 'Été', key: 'summer' },
+            { dataKey: 'Ã‰tÃ©', key: 'summer' },
             { dataKey: 'Automne', key: 'autumn' }
         ];
 
@@ -694,9 +788,9 @@ function buildProductPage(product) {
     if (product.pyramid && Object.keys(product.pyramid).length > 0) {
         // Map original French keys to translation keys
         const levels = [
-            { dataKey: 'Notes de tête', key: 'top_notes', icon: '🎵' },
-            { dataKey: 'Notes de cœur', key: 'heart_notes', icon: '❤️' },
-            { dataKey: 'Notes de fond', key: 'base_notes', icon: '🌳' }
+            { dataKey: 'Notes de tÃªte', key: 'top_notes', icon: 'ðŸŽµ' },
+            { dataKey: 'Notes de cÅ“ur', key: 'heart_notes', icon: 'â¤ï¸' },
+            { dataKey: 'Notes de fond', key: 'base_notes', icon: 'ðŸŒ³' }
         ];
 
         // Select the right pyramid based on current language
@@ -750,7 +844,7 @@ function buildProductPage(product) {
     } else if (product.description_fr) {
         desc = product.description_fr;
     }
-    if (desc) {
+    if (SHOW_PRODUCT_DESCRIPTION && desc) {
         descriptionHtml = `
       <div class="info-card product-description">
         <div class="info-card-title">${t('description')}</div>
@@ -979,7 +1073,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('languageChanged', onLanguageChanged);
 
     // ============================================
-    // FLOATING WHATSAPP — Show only when hero CTA is out of view
+    // FLOATING WHATSAPP â€” Show only when hero CTA is out of view
     // ============================================
     const waFloat = document.getElementById('whatsapp-float');
     const heroCta = document.querySelector('.hero-whatsapp-cta');
@@ -988,7 +1082,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach(entry => {
-                    // Hero CTA visible → hide float. Hero CTA gone → show float.
+                    // Hero CTA visible â†’ hide float. Hero CTA gone â†’ show float.
                     if (entry.isIntersecting) {
                         waFloat.classList.remove('visible');
                     } else {
@@ -1128,7 +1222,7 @@ function renderCartList() {
             <img src="${item.image}" alt="${item.name}" class="cart-item-img" onerror="this.style.display='none'">
             <div class="cart-item-info">
                 <div class="cart-item-name">${item.name}</div>
-                <div class="cart-item-size-price">${item.size} ml — <span class="cart-price">${item.price} MAD</span></div>
+                <div class="cart-item-size-price">${item.size} ml â€” <span class="cart-price">${item.price} MAD</span></div>
                 <div class="cart-item-actions">
                     <button class="qty-btn" onclick="updateQuantity(${idx}, 'dec')">-</button>
                     <span class="qty-val">${item.qty}</span>
@@ -1158,7 +1252,7 @@ function closeCartSidebar() {
     document.body.style.overflow = '';
 }
 
-function handleCheckout(e) {
+async function handleCheckout(e) {
     e.preventDefault();
     if (cart.length === 0) return;
     
@@ -1171,29 +1265,53 @@ function handleCheckout(e) {
     let subtotal = 0;
     
     cart.forEach(item => {
-        itemsText += `- ${item.qty} x 🌸 ${item.name} (${item.size} ml) [Ref: ${item.sku}]\n`;
+        itemsText += `- ${item.qty} x ðŸŒ¸ ${item.name} (${item.size} ml) [Ref: ${item.sku}]\n`;
         subtotal += (item.qty * item.price);
     });
     
     const total = subtotal + DELIVERY_FEE;
     
+    // Save to Database
+    try {
+        const btn = e.target.querySelector('button[type="submit"]');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'CrÃ©ation de la commande...';
+        }
+
+        const orderData = {
+            nom_client: name,
+            phone: phone,
+            ville: city,
+            adresse: address,
+            total: total,
+            items: cart
+        };
+
+        const { error } = await supabaseClient.from('orders').insert([orderData]);
+        if (error) console.error("Erreur enregistrement commande:", error);
+
+    } catch (err) {
+        console.error("Database connection error during checkout", err);
+    }
+
     const message = `Bonjour, je souhaite passer une commande :
 
-📦 *DÉTAILS DE LA COMMANDE*
+ðŸ“¦ *DÃ‰TAILS DE LA COMMANDE*
 ${itemsText}
 Sous-total : ${subtotal} MAD
 Livraison : ${DELIVERY_FEE} MAD
-*Total à payer : ${total} MAD*
+*Total Ã  payer : ${total} MAD*
 
-👤 *INFORMATIONS CLIENT*
+ðŸ‘¤ *INFORMATIONS CLIENT*
 Nom: ${name}
-Téléphone: ${phone}
+TÃ©lÃ©phone: ${phone}
 Ville: ${city}
 Adresse: ${address}
 
-Merci de confirmer l'expédition de ma commande.`;
+Merci de confirmer l'expÃ©dition de ma commande.`;
 
-    const waUrl = `https://wa.me/212777885769?text=${encodeURIComponent(message)}`;
+    const waUrl = `https://wa.me/${STORE_SETTINGS.whatsapp_number}?text=${encodeURIComponent(message)}`;
     
     // Clear cart
     cart = [];
@@ -1206,5 +1324,6 @@ Merci de confirmer l'expédition de ma commande.`;
     // Go to WA
     window.open(waUrl, '_blank');
 }
+
 
 
